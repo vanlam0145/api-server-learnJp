@@ -10,6 +10,7 @@ const socketIO = require('socket.io');
 const bodyParser = require('body-parser');
 const swaggerui = require('swagger-ui-express')
 const http = require('http')
+const cors = require('cors');
 const {User} = require('./src/helper/user.socket')
 const port = process.env.PORT
 mongoose.connect('mongodb+srv://admin:admin@cluster0-cgqit.mongodb.net/learnJP?retryWrites=true&w=majority', {
@@ -20,6 +21,7 @@ mongoose.connect('mongodb+srv://admin:admin@cluster0-cgqit.mongodb.net/learnJP?r
         throw err
     console.log('mongoo connect!')
 });
+app.use(cors())
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 app.use(morgan('dev'))
