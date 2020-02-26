@@ -1,11 +1,35 @@
 const UsersModel = require('../model/users.model')
 const errorService = require('../../helper/errorService')
-const untilServices=require('./untilServices')
+const untilServices = require('./untilServices')
+const bcrypt = require('bcryptjs')
+exports.UsersModel = UsersModel;
 exports.getList = async () => await UsersModel.find({}).exec()
 exports.getById = async (id) => await UsersModel.findById(id).exec()
 exports.create = async function (body) {
-    return await untilServices.exec(UsersModel.create(body))
+    return await untilServices.exec(UsersModel.create({...body, hash: bcrypt.hashSync(body.password, 10)}))
+}
+exports.login = async ({username, password, email}) => {
+    const user = await UsersModel.findOne({...(email ? {email} : {username})})
+    if (user && bcrypt.compareSync(password, user.hash)) {
+        const u_user = await UsersModel.findByIdAndUpdate({_id: user._id, isGuest: false, ...(email ? {typeLogin: User.type_login.EM} : {typeLogin: UsersModel.type_login.UN})})
+        const {hash, ...userWithoutHash} = u_user.toJSON()
+        return userWithoutHash
+    } else return errorService.error.loginFaild()
 }
 exports.getMe = async (id) => {
-    return await this.findById(id).select('-hash')
+    return await UsersModel.findById(id).select('-hash').lean()
+}
+exports.getCourseLatest = async (id) => {
+    const user = await UsersModel.findById(id)
+        .populate({path: 'courses', populate: {path: 'contents'}, options: {sort: '-create_at'}})
+        .select('-hash')
+    const {avatar, username, _id, courses, create_at, ...userExceptField} = user.toJSON()
+    return {
+        avatar,
+        username,
+        _id,
+        courses,
+        create_at
+    }
+
 }

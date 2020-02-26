@@ -1,6 +1,7 @@
 const Ajv = require('ajv');
 const AjvError = require("ajv-errors");
 const AjvKeyWords = require("ajv-keywords");
+const errorService = require('../../helper/errorService')
 exports.validateJson = (schema, body) => {
     const ajv = new Ajv({allErrors: true, jsonPointers: true})
     AjvError(ajv, {singleError: true});
@@ -11,7 +12,7 @@ exports.validateJson = (schema, body) => {
         message: ajv.errorsText()
     }
 }
-exports.exec= async (promise)=> {
+exports.exec = async (promise) => {
     try {
         const result = await promise;
         if ((result === undefined || result === null) && !option.allowNull) {

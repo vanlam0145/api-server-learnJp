@@ -39,5 +39,8 @@ exports.error = {
     },
     anyError(message) {
         return {code: 500, message}
+    },
+    loginFaild() {
+        return {code: 403, message: "Login faild"}
     }
 }

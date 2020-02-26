@@ -1,0 +1,38 @@
+{
+  "name": "dashboardlearnjp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "serve": "nodemon server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/vanlam0145/dashboardlearnjpapi.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/vanlam0145/dashboardlearnjpapi/issues"
+  },
+  "homepage": "https://gitlab.com/vanlam0145/dashboardlearnjpapi#readme",
+  "dependencies": {
+    "ajv": "^6.12.0",
+    "ajv-errors": "^1.0.1",
+    "ajv-keywords": "^3.4.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "custom-template-generator": "^0.1.2",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "inquirer": "^7.0.4",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.15",
+    "mongoose": "^5.9.2",
+    "morgan": "^1.9.1",
+    "nodemon": "^2.0.2",
+    "socket.io": "^2.3.0"
+  }
+}
