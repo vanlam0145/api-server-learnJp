@@ -51,11 +51,16 @@ exports.au = (role = '') => async (req, res, next) => {
         const token = req.headers.authorization.split(' ')[1]
         if (token)
             jwt.verify(token, !role ? process.env.TOKEN_SECRET : process.env.TOKEN_ADMIN_SECRET, async (err, decoded) => {
-                if (err) return errorService.error.anyError(err.message, 401)
-                const user = await UsersService.UsersModel.findById(decoded._id).select('-hash').lean()
-                if (!user) return errorService.error.badToken()
-                req.user = user
-                next()
+                if (err)
+                    res.status(errorService.error.anyError(err.message, 401).code).json(errorService.error.anyError(err.message, 401))
+                else {
+                    const user = await UsersService.UsersModel.findById(decoded._id).select('-hash').lean()
+                    if (!user) res.status(errorService.error.badToken().code).json(errorService.error.badToken())
+                    else {
+                        req.user = user
+                        next()
+                    }
+                }
             })
         else res.status(errorService.error.badToken().code).json(errorService.error.badToken())
     }
@@ -63,7 +68,6 @@ exports.au = (role = '') => async (req, res, next) => {
 }
 exports.me = (req, res, next) => {
     const {_id} = req.user
-    console.log(_id)
     if (!Types.ObjectId.isValid(_id))
         console.log("1")
     else UsersService

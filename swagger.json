@@ -1,0 +1,688 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "API learn japanese",
+    "description": "document for api , KHÔNG HIỂU API THÌ HỎI",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000/api",
+      "description": "With docker-compose and nginx proxy"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "User",
+      "description": "API for user in the system"
+    },
+    {
+      "name": "Avatar",
+      "description": "API for avatar in the system"
+    },
+    {
+      "name": "Course",
+      "description": "API for course in the system"
+    },
+    {
+      "name": "Topic",
+      "description": "API for topic in the system"
+    },
+    {
+      "name": "History",
+      "description": "API for History in the system"
+    }
+  ],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/histories/set-history": {
+      "post": {
+        "tags": ["History"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "set history ( server)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/History"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "422": {
+            "$ref": "#/definitions/responses/UnprocessableEntity"
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/topics": {
+      "get": {
+        "tags": ["Topic"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "get all topic",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "422": {
+            "$ref": "#/definitions/responses/UnprocessableEntity"
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/topics/{id}": {
+      "get": {
+        "tags": ["Topic"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "get details topic",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of topic",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "422": {
+            "$ref": "#/definitions/responses/UnprocessableEntity"
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/topics/{id}/learn": {
+      "get": {
+        "tags": ["Topic"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "get details topic",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of topic",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "422": {
+            "$ref": "#/definitions/responses/UnprocessableEntity"
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/courses": {
+      "post": {
+        "tags": ["Course"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "create course",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Course"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Course"
+            }
+          },
+          "422": {
+            "$ref": "#/definitions/responses/UnprocessableEntity"
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/courses/set-contents": {
+      "put": {
+        "tags": ["Course"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "update content , if isAdd = true is add else is remove",
+        "requestBody": {
+          "description": "nếu isAdd là false thì field contents là array của id ,vd ['id',...]",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/SetCourse"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SetCourse"
+            }
+          },
+          "422": {
+            "$ref": "#/definitions/responses/UnprocessableEntity"
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/courses/{id}/learn": {
+      "get": {
+        "tags": ["Course"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "learn course",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of course",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Course"
+            }
+          },
+          "422": {
+            "$ref": "#/definitions/responses/UnprocessableEntity"
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/courses/{id}": {
+      "get": {
+        "tags": ["Course"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "get course details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of course",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Course"
+            }
+          },
+          "422": {
+            "$ref": "#/definitions/responses/UnprocessableEntity"
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Course"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "delete course",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of course",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Course"
+            }
+          },
+          "422": {
+            "$ref": "#/definitions/responses/UnprocessableEntity"
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": ["User"],
+        "summary": "create user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "422": {
+            "$ref": "#/definitions/responses/UnprocessableEntity"
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": ["User"],
+        "summary": "login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Login"
+            }
+          },
+          "400": {
+            "description": "username or password is incorrect"
+          }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": ["User"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "get me",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/users/set-username": {
+      "put": {
+        "tags": ["User"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "change username",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/setUsername"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/users/set-question": {
+      "put": {
+        "tags": ["User"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "thay đổi số lượng question (HOẶC) số lượng answer trong setting user (số lượng question, số lượng answer > 2 ( check dùm))",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/setQuestion"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/users/get-courses-latest": {
+      "get": {
+        "tags": ["User"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "get coures latest",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/avatars": {
+      "put": {
+        "tags": ["Avatar"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "change avatar",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            },
+            "encoding": {
+              "avatar": {
+                "contentType": "image/png, image/jpeg"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "$ref": "#/definitions/responses/UnauthorizedError"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Access token is missing or invalid"
+      },
+      "UnprocessableEntity": {
+        "description": "${field} is required"
+      }
+    },
+    "Course": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "mean": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "History": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "example": {
+            "topic": "5ddc170806a7a105c9d8d0e0"
+          }
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "correct": {
+                "type": "boolean"
+              }
+            },
+            "example": {
+              "_id": "5ddc170806a7a105c9d8d154",
+              "correct": true
+            }
+          }
+        }
+      }
+    },
+    "SetCourse": {
+      "type": "object",
+      "properties": {
+        "course_id": {
+          "type": "string"
+        },
+        "contents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "mean": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "isAdd": {
+          "type": "boolean"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "userForWeb": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Login": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "setUsername": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "newName": {
+          "type": "string"
+        }
+      }
+    },
+    "setQuestion": {
+      "type": "object",
+      "properties": {
+        "sumQuestion": {
+          "type": "number",
+          "minimum": 4
+        },
+        "numberAnswer": {
+          "type": "number",
+          "minimum": 4
+        }
+      }
+    }
+  }
+}
