@@ -21,13 +21,7 @@ mongoose.connect('mongodb+srv://admin:admin@cluster0-cgqit.mongodb.net/learnJP?r
         throw err
     console.log('mongoo connect!')
 });
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
-  next()
-})
-app.use(cors())
+app.use('*', cors())
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 app.use(morgan('dev'))
