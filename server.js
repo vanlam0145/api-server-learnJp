@@ -21,7 +21,7 @@ mongoose.connect('mongodb+srv://admin:admin@cluster0-cgqit.mongodb.net/learnJP?r
         throw err
     console.log('mongoo connect!')
 });
-app.use('*', cors())
+app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 app.use(morgan('dev'))
