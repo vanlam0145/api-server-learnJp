@@ -21,13 +21,14 @@ mongoose.connect('mongodb+srv://admin:admin@cluster0-cgqit.mongodb.net/learnJP?r
         throw err
     console.log('mongoo connect!')
 });
+app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 app.use(morgan('dev'))
 app.use('/api/assets', express.static(path.join(__dirname, 'assets')))
 app.use('/api/docs', swaggerui.serve, swaggerui.setup(require('./swagger.json'), {explorer: true}))
 app.use('/api', route)
-app.use(cors());
+
 
 const server = http.createServer(app)
 const secureIO = socketIO(server);
