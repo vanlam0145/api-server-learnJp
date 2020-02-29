@@ -11,7 +11,7 @@ exports.create = async function (body) {
 exports.login = async ({username, password, email}) => {
     const user = await UsersModel.findOne({...(email ? {email} : {username})})
     if (user && bcrypt.compareSync(password, user.hash)) {
-        const u_user = await UsersModel.findByIdAndUpdate({_id: user._id, isGuest: false, ...(email ? {typeLogin: User.type_login.EM} : {typeLogin: UsersModel.type_login.UN})})
+        const u_user = await UsersModel.findByIdAndUpdate({_id: user._id, isGuest: false, ...(email ? {typeLogin: UsersModel.type_login.EM} : {typeLogin: UsersModel.type_login.UN})})
         const {hash, ...userWithoutHash} = u_user.toJSON()
         return userWithoutHash
     } else return errorService.error.loginFaild()
