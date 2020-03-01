@@ -35,3 +35,34 @@ exports.delete = async function (id) {
     }
     return await ContentModel.deleteOne({_id: id})
 }
+exports.updateContentOnCourse = async (body) => {
+    const {course_id, contents, isAdd} = body
+    return isAdd ? await this.addContent(course_id, contents) : await this.removeContent(course_id, contents)
+}
+exports.addContent = async (id, content) => {
+    const contents = await untilServices.exec(ContentModel.create(content))
+    if (contents.code) return contents
+    return await untilServices.exec(CourseModel.updateOne({_id: id}, {$push: {contents}}, {new: true}))
+}
+exports.removeContent = async (id, contents) => {
+    if (Types.ObjectId.isValid(id)) {
+        if (!contents || contents.length == 0)
+            return errorService.error.anyError("This request don't have any 'contens'", 403)
+        else {
+            for (let content of contents) {
+                if (!Types.ObjectId.isValid(content))
+                    return errorService.error.anyError("This request need contents is Array ObjectId", 403)
+            }
+            const couse = await untilServices.exec(CourseModel.updateOne({_id: id}, {$pull: {contents: {$in: contents}}}))
+            if (couse.code)
+                return couse
+            return await untilServices.exec(ContentModel.deleteMany({_id: {$in: contents}}))
+        }
+    }
+    else return errorService.error.anyError("This request need course_id is ObjectId", 403)
+}
+exports.deleteContentCourse = async (id) => {
+    const content = await untilServices.exec(ContentModel.deleteOne({_id: id}))
+    if (content.code) return content
+    return await untilServices.exec(CourseModel.updateOne({contents: id}, {$pull: {contents: id}}))
+}

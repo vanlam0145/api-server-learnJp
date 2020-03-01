@@ -37,9 +37,6 @@ exports.error = {
     userError(message) {
         return {code: 403, status: '-9', message};
     },
-    anyError(message) {
-        return {code: 500, message}
-    },
     loginFaild() {
         return {code: 403, message: "Login faild"}
     }

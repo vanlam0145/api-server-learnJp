@@ -39,3 +39,20 @@ exports.delete = (req, res) => {
         res.status(result.code ? result.code : 200).json(result)
     })
 }
+exports.updateContentOnCourse = (req, res) => {
+    let vali
+    if (!req.body.isAdd) vali = until.validateJson((new courseSchema()).updateContentOnCourse, req.body)
+    else vali = until.validateJson((new courseSchema()).updateContentOnCourseisAdd, req.body)
+    if (!vali.isValid) res.status(500).json({mess: vali.message})
+    else
+        CourseService.updateContentOnCourse(req.body).then(result => {
+            res.status(result.code ? result.code : 200).json(result)
+        })
+}
+exports.deleteContentCourse = (req, res) => {
+    console.log(req.query.id)
+    if (!req.query.id) return errorService.error.anyError("You need 'id' in params query", 403)
+    else CourseService.deleteContentCourse(req.query.id).then(result => {
+        res.status(result.code ? result.code : 200).json(result)
+    })
+}
