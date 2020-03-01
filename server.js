@@ -12,6 +12,7 @@ const swaggerui = require('swagger-ui-express')
 const http = require('http')
 const cors = require('cors');
 const {User} = require('./src/helper/user.socket')
+const doc = require('./src/doc')
 const port = process.env.PORT
 mongoose.connect('mongodb+srv://admin:admin@cluster0-cgqit.mongodb.net/learnJP?retryWrites=true&w=majority', {
     useNewUrlParser: true,
@@ -26,7 +27,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 app.use(morgan('dev'))
 app.use('/api/assets', express.static(path.join(__dirname, 'assets')))
-app.use('/api/docs', swaggerui.serve, swaggerui.setup(require('./swagger.json'), {explorer: true}))
+app.use('/api/docs', swaggerui.serve, swaggerui.setup(doc, {explorer: true}))
 app.use('/api', route)
 
 
