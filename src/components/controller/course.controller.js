@@ -34,3 +34,8 @@ exports.learn = (req, res) => {
         else res.json(response)
     })
 }
+exports.delete = (req, res) => {
+    CourseService.delete(req.params.id).then(result => {
+        res.status(result.code ? result.code : 200).json(result)
+    })
+}

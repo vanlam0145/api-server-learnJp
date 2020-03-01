@@ -4,6 +4,7 @@ const UserModel = require('../model/users.model');
 const errorService = require('../../helper/errorService')
 const untilServices = require('./untilServices')
 const question = require('../../helper/question')
+const Types = require('mongoose').Types
 exports.CourseModel = CourseModel;
 exports.getList = async () => await CourseModel.find({}).exec()
 exports.getById = async (id) => await CourseModel.findById(id).populate('contents').lean()
@@ -26,4 +27,11 @@ exports.makeQuestion = async id => {
 }
 exports.learn = id => {
     this.makeQuestion(id)
+}
+exports.delete = async function (id) {
+    const courses = await untilServices.exec(CourseModel.findByIdAndDelete({_id: id}))
+    for (let content of courses.contents) {
+        await untilServices.exec(ContentModel.deleteOne({_id: content}))
+    }
+    return await ContentModel.deleteOne({_id: id})
 }

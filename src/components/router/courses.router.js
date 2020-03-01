@@ -7,6 +7,7 @@ const courseRouter = function () {
     route.get('/:id', usersCRL.au(), courseCRL.getById)
     route.get('/:id/learn', usersCRL.au(), courseCRL.learn)
     route.post('/', usersCRL.au(), courseCRL.create)
+    route.delete('/:id', usersCRL.au(), courseCRL.delete)
     return route
 }
 module.exports = courseRouter
