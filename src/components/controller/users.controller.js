@@ -64,7 +64,7 @@ exports.au = (role = '') => async (req, res, next) => {
             })
         else res.status(errorService.error.badToken().code).json(errorService.error.badToken())
     }
-    else res.status(errorService.error.anyError("Token is required", 500).code).json(errorService.error.anyError("Token is required"))
+    else res.status(errorService.error.anyError("Token is required", 500).code).json(errorService.error.anyError("Token is required", 500))
 }
 exports.me = (req, res, next) => {
     const {_id} = req.user
@@ -104,4 +104,7 @@ const _createToken = (user, role = '') => {
             expiresIn: !role ? process.env.TOKEN_EXPIRED : process.env.TOKEN_ADMIN_EXPIRED
         })
     }
+}
+exports.addImage = (req, res) => {
+
 }

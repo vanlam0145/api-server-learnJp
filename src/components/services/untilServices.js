@@ -27,7 +27,7 @@ exports.exec = async (promise) => {
         };
         console.log('err', err);
         if (err.code == 11000)
-            return errorService.error.anyError(err.errmsg)
+            return errorService.error.anyError(err.errmsg, 500)
         else return errorService.error.somethingWentWrong(err.errors)
 
     }
