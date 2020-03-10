@@ -1,6 +1,14 @@
 const UsersService = require('../services/users.services')
 const usersSchema = require('./users.schema')
 const Types = require('mongoose').Types
+const multer = require('multer')
+const folderLv1DriveController = require('../controller/folderLv1Drive.controller')
+const folderLv2Drive = require('../model/folderLv2Drive.model')
+const driverGoogle = require('../../helper/googleDriverApi')
+const imageModel = require('../model/imageGoogleDrive.model')
+const driverGoogleHelper = require('../../helper/googleDriverHelper')
+const fs = require('fs')
+const UsersModel = require('../model/users.model')
 const errorService = require('../../helper/errorService')
 const until = require('../services/untilServices')
 const typeToken = {
@@ -13,7 +21,7 @@ exports.getList = (req, res) => {
     UsersService.getList()
         .then(result => {
             if (result) res.send(result)
-            else res.send('kaka')
+            else res.status(403).json(errorService.error.dataEmpty())
         })
         .catch(err => {if (err) throw err})
 }
@@ -21,7 +29,7 @@ exports.getById = (req, res) => {
     UsersService.getById(req.params.id)
         .then(result => {
             if (result) res.send(result)
-            else res.send('kaka')
+            else res.status(403).json(errorService.error.dataEmpty())
         })
         .catch(err => {if (err) throw err})
 }
@@ -92,6 +100,82 @@ exports.getCourseLatest = (req, res) => {
                 })
         })
 }
+exports.deleteImage = async (req, res) => {
+    fs.readFile('credentials.json', (err, content) => {
+        if (err) {
+            const err = errorService.error.anyError(`Error loading client secret file:', err`, 403)
+            return res.status(err.code).json(err);
+        }
+        driverGoogle.authorize(JSON.parse(content), async auth => {
+            //checkExists
+            try {
+                const deleteFile = await driverGoogle.deleteFile(auth, req.params.id)
+                if (deleteFile.success && deleteFile.data == "") {
+                    return res.send(await imageModel.deleteOne({id: req.params.id}))
+                }
+            } catch (error) {
+                return res.send(error + "aa")
+            }
+        });
+    });
+}
+exports.addImage = async (req, res) => {
+
+    const data = await driverGoogleHelper.syncFolder(req, res)
+    if (data.length == 0) return res.status(400).send("Drive not have Folder Avatar")
+
+    uploadFile(req, res, (error) => {
+        if (error instanceof multer.MulterError) {
+            console.log("hear is err")
+            const err = errorService.error.anyError(`Error when trying to upload: ${error}`, 403)
+            return res.status(err.code).json(err);
+        }
+        else {
+            if (error) {
+                const err = errorService.error.anyError(`Error when trying to upload: ${error}`, 403)
+                return res.status(err.code).json(err);
+            }
+            fs.readFile('credentials.json', (err, content) => {
+
+                if (err) {
+                    const err = errorService.error.anyError(`Error loading client secret file:', err`, 403)
+                    return res.status(err.code).json(err);
+                }
+                driverGoogle.authorize(JSON.parse(content), async auth => {
+                    //checkExists
+                    try {
+                        if (!req.file) return res.status(500).send("image?")
+                        let userFolder = await folderLv2Drive.findOne({idUser: req.user._id})
+                        if (!userFolder) {
+                            let userFolderID = await driverGoogle.createFolder(auth, req.user._id, "1YNBneKgkmHORdncYiCIZeeqpwiJ3DHdr")
+                            userFolder = await folderLv2Drive.create({idUser: req.user._id, id: userFolderID, name: req.user.username, parent: "1YNBneKgkmHORdncYiCIZeeqpwiJ3DHdr"})
+                        }
+                        let countImage = await imageModel.count({parent: userFolder.id})
+                        if (countImage > 10) {
+                            const err = errorService.error.anyError("You can only own 10 at most image", 501)
+                            return res.status(err.code).json(err)
+                        }
+                        let imageId = await driverGoogle.uploadFile(auth, req.file, userFolder.id)
+                        return res.send(await imageModel.create({
+                            name: req.file.originalname,
+                            id: imageId.id,
+                            parent: userFolder.id,
+                            idUser: req.user._id,
+                            webViewLink: imageId.webViewLink
+                        }))
+                    } catch (error) {
+                        return res.send(error + "aa")
+                    }
+                });
+            });
+        }
+    });
+}
+exports.setAvartar = async (req, res) => {
+    UsersService.setAvartar(req.params.idimage, req.user._id).then(result => {
+        res.status(result.code ? result.code : 200).json(result)
+    })
+}
 const _createToken = (user, role = '') => {
     const payload = {
         email: user.email,
@@ -105,6 +189,19 @@ const _createToken = (user, role = '') => {
         })
     }
 }
-exports.addImage = (req, res) => {
+let diskStorage = multer.diskStorage({
+    destination: (req, file, callback) => {
+        callback(null, "uploads");
+    },
+    filename: (req, file, callback) => {
+        let math = ["image/jpeg"];
+        if (math.indexOf(file.mimetype) === -1) {
+            let errorMess = `The file <strong>${file.originalname}</strong> is invalid. Only allowed to upload image jpeg.`;
+            return callback(errorMess, null);
+        }
+        let filename = `avartar-${Date.now()}-${file.originalname}`;
+        callback(null, filename);
+    }
+});
+let uploadFile = multer({storage: diskStorage}).single("file");
 
-}

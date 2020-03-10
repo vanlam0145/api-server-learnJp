@@ -1,6 +1,8 @@
 const UsersModel = require('../model/users.model')
 const errorService = require('../../helper/errorService')
 const untilServices = require('./untilServices')
+const imageGoogleDrive = require('../model/imageGoogleDrive.model')
+
 const bcrypt = require('bcryptjs')
 exports.UsersModel = UsersModel;
 exports.getList = async () => await UsersModel.find({}).exec()
@@ -31,5 +33,10 @@ exports.getCourseLatest = async (id) => {
         courses,
         create_at
     }
-
+}
+exports.setAvartar = async (idimage, userID) => {
+    const image = await imageGoogleDrive.findOne({id: idimage, idUser: userID}).exec()
+    if (!image || !image.webViewLink)
+        return errorService.error.anyError("You don't have image!", 403)
+    return await UsersModel.updateOne({_id: userID}, {$set: {avatar: image.webViewLink}}).lean().exec()
 }

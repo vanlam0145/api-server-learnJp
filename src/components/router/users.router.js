@@ -8,6 +8,12 @@ const usersRouter = function () {
     route.post('/login', usersCRL.login)
     route.get('/me', usersCRL.au(), usersCRL.me)
     route.get('/get-courses-latest', usersCRL.au(), usersCRL.getCourseLatest)
+    //avartar
+    route.put('/setAvartar/:idimage', usersCRL.au(), usersCRL.setAvartar)
+    //image
+    route.post('/image', usersCRL.au(), usersCRL.addImage)
+    route.delete('/image/:id', usersCRL.au(), usersCRL.deleteImage)
+
     return route
 }
 module.exports = usersRouter

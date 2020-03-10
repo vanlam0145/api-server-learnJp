@@ -53,7 +53,7 @@ exports.path = () => {
                 }
             }
         },
-        "/users/{id}": {
+        "/users/me": {
             "get": {
                 "tags": ["Users"],
                 "security": [
@@ -62,17 +62,17 @@ exports.path = () => {
                     }
                 ],
                 "summary": "get details users",
-                "parameters": [
-                    {
-                        //them vao sau
-                        //   "name": "id",
-                        //   "in": "path",
-                        //   "description": "id of topic",
-                        //   "required": true,
-                        //   "type": "integer",
-                        //   "format": "int64"
-                    }
-                ],
+                // "parameters": [
+                //     {
+                //         //them vao sau
+                //         //   "name": "id",
+                //         //   "in": "path",
+                //         //   "description": "id of topic",
+                //         //   "required": true,
+                //         //   "type": "integer",
+                //         //   "format": "int64"
+                //     }
+                // ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -85,6 +85,9 @@ exports.path = () => {
                     }
                 }
             },
+        },
+        "/users/{id}": {
+
             "delete": {
                 "tags": ["Users"],
                 "security": [
@@ -152,6 +155,33 @@ exports.path = () => {
                 }
             },
         },
+        "/users/login": {
+            "post": {
+                "tags": ["Users"],
+                "summary": "login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/definitions/Login"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Login"
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/definitions/responses/UnprocessableEntity"
+                    }
+                }
+            }
+        }
     }
 }
 exports.definition = () => {
@@ -178,5 +208,17 @@ exports.definition = () => {
                 }
             }
         },
+        "Login": {
+            "type": "object",
+            "properties": {
+                "username": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                }
+            },
+            required: ["username", "password"]
+        }
     }
 }

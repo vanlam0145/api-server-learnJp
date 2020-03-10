@@ -17,6 +17,7 @@ const usersSchema = new Schema({
 	},
 	username: {
 		type: String,
+		unique: true,
 		required: true
 	},
 	isGuest: {
@@ -77,8 +78,7 @@ const usersSchema = new Schema({
 		}
 	],
 	avatar: {
-		type: mongoose.Schema.ObjectId,
-		ref: 'Avatar'
+		type: String
 	},
 	courses: [
 		{
