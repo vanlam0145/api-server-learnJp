@@ -47,7 +47,10 @@ const regisDocs = function () {
         const routerName = r.split('.')[0];
         const RouterName = (_.compact(routerName).splice(0, 1)).join("").toUpperCase() + (_.compact(routerName).splice(1, (_.compact(routerName)).length)).join("")
         tags.push(require(`./${r}`).tag())
-        definitions[`${RouterName}`] = require(`./${r}`).definition()[`${RouterName}`]
+        const definitionName = Object.keys(require(`./${r}`).definition())
+        for (let name of definitionName) {
+            definitions[`${name}`] = require(`./${r}`).definition()[`${name}`]
+        }
         const pathName = Object.keys(require(`./${r}`).path())
         for (let name of pathName) {
             paths[`${name}`] = require(`./${r}`).path()[`${name}`]

@@ -30,6 +30,11 @@ exports.path = () => {
             "post": {
                 "tags": ["Course"],
                 "summary": "create course",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -85,39 +90,39 @@ exports.path = () => {
                     }
                 }
             },
-            // "delete": {
-            //     "tags": ["Course"],
-            //     "security": [
-            //         {
-            //             "bearerAuth": []
-            //         }
-            //     ],
-            //     "summary": "delete course",
-            //     "parameters": [
-            //         {
-            //             // "name": "id",
-            //             // "in": "path",
-            //             // "description": "id of course",
-            //             // "required": true,
-            //             // "type": "integer",
-            //             // "format": "int64"
-            //         }
-            //     ],
-            //     "responses": {
-            //         "200": {
-            //             "description": "OK",
-            //             "schema": {
-            //                 "$ref": "#/definitions/Course"
-            //             }
-            //         },
-            //         "422": {
-            //             "$ref": "#/definitions/responses/UnprocessableEntity"
-            //         },
-            //         "401": {
-            //             "$ref": "#/definitions/responses/UnauthorizedError"
-            //         }
-            //     }
-            // },
+            "delete": {
+                "tags": ["Course"],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "delete course",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of course",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Course"
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/definitions/responses/UnprocessableEntity"
+                    },
+                    "401": {
+                        "$ref": "#/definitions/responses/UnauthorizedError"
+                    }
+                }
+            },
             // "put": {
             //     "tags": ["Course"],
             //     "security": [
@@ -184,7 +189,42 @@ exports.path = () => {
                     }
                 }
             },
-        }
+        },
+        "/course/set-contents": {
+            "put": {
+                "tags": ["Course"],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "update details course",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/definitions/Course"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Course"
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/definitions/responses/UnprocessableEntity"
+                    },
+                    "401": {
+                        "$ref": "#/definitions/responses/UnauthorizedError"
+                    }
+                }
+            },
+        },
     }
 }
 exports.definition = () => {
