@@ -39,5 +39,8 @@ exports.error = {
     },
     loginFaild() {
         return {code: 403, message: "Login faild"}
+    },
+    dataEmpty() {
+        return {code: 403, message: "data Empty!"}
     }
 }
