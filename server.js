@@ -16,7 +16,8 @@ const doc = require('./src/doc')
 const port = process.env.PORT
 mongoose.connect('mongodb+srv://admin:admin@cluster0-cgqit.mongodb.net/learnJP?retryWrites=true&w=majority', {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
 }, (err) => {
     if (err)
         throw err
@@ -34,5 +35,5 @@ app.use('/api', route)
 const server = http.createServer(app)
 const secureIO = socketIO(server);
 require('./src/socket/userCommant.socket')(secureIO, User)
-server.listen(port, () => {console.log(`port runing port: ${port}`)})
+server.listen(port, () => {console.log(`server runing : http://localhost:${port}`)})
 
