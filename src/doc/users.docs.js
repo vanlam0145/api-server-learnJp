@@ -98,12 +98,12 @@ exports.path = () => {
                 "summary": "delete users",
                 "parameters": [
                     {
-                        // "name": "id",
-                        // "in": "path",
-                        // "description": "id of users",
-                        // "required": true,
-                        // "type": "integer",
-                        // "format": "int64"
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of users",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
                     }
                 ],
                 "responses": {
@@ -178,6 +178,135 @@ exports.path = () => {
                     },
                     "422": {
                         "$ref": "#/definitions/responses/UnprocessableEntity"
+                    }
+                }
+            }
+        },
+        "users/get-courses-latest": {
+            "get": {
+                "tags": ["Users"],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "get details users",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "$ref": "#/definitions/responses/UnprocessableEntity"
+                    },
+                    "401": {
+                        "$ref": "#/definitions/responses/UnauthorizedError"
+                    }
+                }
+            },
+        },
+        "users/setAvartar/{idimage}": {
+            "put": {
+                "tags": ["Users"],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "get details users",
+                "parameters": [
+                    {
+                        "name": "idimage",
+                        "in": "path",
+                        "description": "id of image",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "$ref": "#/definitions/responses/UnprocessableEntity"
+                    },
+                    "401": {
+                        "$ref": "#/definitions/responses/UnauthorizedError"
+                    }
+                }
+            },
+        },
+        "users/image/{id}": {
+            "delete": {
+                "tags": ["Users"],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "delete users",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of image",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Users"
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/definitions/responses/UnprocessableEntity"
+                    },
+                    "401": {
+                        "$ref": "#/definitions/responses/UnauthorizedError"
+                    }
+                }
+            },
+        },
+        "/users/image": {
+            post: {
+                "tags": ["Users"],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "upload File",
+                requestBody: {
+                    content: {
+                        "multipart/form-data": {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    file: {
+                                        type: 'string',
+                                        format: 'binary'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Users"
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/definitions/responses/UnprocessableEntity"
+                    },
+                    "401": {
+                        "$ref": "#/definitions/responses/UnauthorizedError"
                     }
                 }
             }
