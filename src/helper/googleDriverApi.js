@@ -1,4 +1,4 @@
-const {google} = require('googleapis');
+const { google } = require('googleapis');
 const fs = require('fs');
 const readline = require('readline')
 const path = require('path')
@@ -7,7 +7,7 @@ const SCOPES = ['https://www.googleapis.com/auth/drive']
 const TOKEN_PATH = 'token.json';
 const errorService = require('./errorService')
 exports.authorize = function (credentials, callback) {
-    const {client_secret, client_id, redirect_uris} = credentials.installed;
+    const { client_secret, client_id, redirect_uris } = credentials.installed;
     const oAuth2Client = new google.auth.OAuth2(
         client_id, client_secret, redirect_uris[0]);
 
@@ -43,7 +43,7 @@ function getAccessToken(oAuth2Client, callback) {
     });
 }
 exports.listFiles = function (auth) {
-    const drive = google.drive({version: 'v3', auth});
+    const drive = google.drive({ version: 'v3', auth });
     drive.files.list({
         q: "trashed = false" && "mimeType='application/vnd.google-apps.folder'",
         fields: 'nextPageToken, files(*)',
@@ -63,7 +63,7 @@ exports.listFiles = function (auth) {
 }
 exports.uploadFile = function (auth, fileimage, parents) {
     return new Promise((resolve, reject) => {
-        const drive = google.drive({version: 'v3', auth})
+        const drive = google.drive({ version: 'v3', auth })
         var fileMetadata = {
             'name': `${fileimage.originalname}.jpg`,
             parents: [parents]
@@ -76,28 +76,38 @@ exports.uploadFile = function (auth, fileimage, parents) {
             resource: fileMetadata,
             media: media,
             fields: 'id, webViewLink'
-        }, function (err, file) {
+        }, async function (err, file) {
             if (err) {
                 fs.unlinkSync(path.join(__dirname, `../../uploads/${fileimage.filename}`))
                 reject(err);
             } else {
                 fs.unlinkSync(path.join(__dirname, `../../uploads/${fileimage.filename}`))
+                await permissionsFile(auth, file.data.id)
                 resolve(file.data)
             }
         });
     })
 }
+const permissionsFile = (auth, idFile) => {
+    return new Promise((resolve, reject) => {
+        const drive = google.drive({ version: 'v3', auth });
+        drive.permissions.create({ fileId: idFile, requestBody: { role: 'reader',type:'anyone' } }, (err, permissionFile) => {
+            if (err) reject(err)
+            else resolve(permissionFile)
+        })
+    })
+}
 exports.deleteFile = function (auth, id) {
     return new Promise((resolve, reject) => {
-        const drive = google.drive({version: 'v3', auth});
-        drive.files.delete({fileId: id}, (err, file) => {
+        const drive = google.drive({ version: 'v3', auth });
+        drive.files.delete({ fileId: id }, (err, file) => {
             if (err) reject(err)
-            else resolve({data: file.data, success: true})
+            else resolve({ data: file.data, success: true })
         })
     })
 }
 exports.retrieveAllFilesInFolder = function (auth, callback) {
-    const drive = google.drive({version: 'v3', auth});
+    const drive = google.drive({ version: 'v3', auth });
     drive.files.list({
         q: "trashed = false and mimeType='application/vnd.google-apps.folder' and '0AFiqKTBqK4BQUk9PVA' in parents",
         fields: 'nextPageToken, files(*)',
@@ -117,7 +127,7 @@ exports.retrieveAllFilesInFolder = function (auth, callback) {
 }
 exports.syncFolderDefault = function (auth, idDriver, modal) {
     return new Promise((resolve, reject) => {
-        const drive = google.drive({version: 'v3', auth})
+        const drive = google.drive({ version: 'v3', auth })
         drive.files.list({
             q: `trashed = false and mimeType = 'application/vnd.google-apps.folder' and '${idDriver}' in parents`,
             fields: 'nextPageToken, files(*)'
@@ -128,12 +138,12 @@ exports.syncFolderDefault = function (auth, idDriver, modal) {
             }
             const files = res.data.files;
             if (files.length) {
-                await modal.deleteMany({id: {$not: {$in: files.map(file => file.id)}}})
-                resolve({mess: 'delete Files if true'});
+                await modal.deleteMany({ id: { $not: { $in: files.map(file => file.id) } } })
+                resolve({ mess: 'delete Files if true' });
             }
             else {
                 await modal.deleteMany({})
-                resolve({mess: 'delete'})
+                resolve({ mess: 'delete' })
             }
         })
     })
@@ -141,7 +151,7 @@ exports.syncFolderDefault = function (auth, idDriver, modal) {
 exports.createFolder = function (auth, idUser, result = '0AFiqKTBqK4BQUk9PVA') {
     return new Promise((resolve, reject) => {
         const folderId = result;
-        const drive = google.drive({version: 'v3', auth})
+        const drive = google.drive({ version: 'v3', auth })
         var fileMetadata = {
             'name': idUser,
             'mimeType': 'application/vnd.google-apps.folder',
