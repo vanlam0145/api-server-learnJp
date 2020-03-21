@@ -9,11 +9,6 @@ exports.path = () => {
         "/challenges": {
             "get": {
                 "tags": ["Challenges"],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
                 "summary": "get all challenges",
                 "responses": {
                     "200": {
@@ -30,6 +25,11 @@ exports.path = () => {
             "post": {
                 "tags": ["Challenges"],
                 "summary": "create challenges",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {

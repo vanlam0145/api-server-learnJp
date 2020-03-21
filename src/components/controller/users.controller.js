@@ -2,13 +2,11 @@ const UsersService = require('../services/users.services')
 const usersSchema = require('./users.schema')
 const Types = require('mongoose').Types
 const multer = require('multer')
-const folderLv1DriveController = require('../controller/folderLv1Drive.controller')
 const folderLv2Drive = require('../model/folderLv2Drive.model')
 const driverGoogle = require('../../helper/googleDriverApi')
 const imageModel = require('../model/imageGoogleDrive.model')
 const driverGoogleHelper = require('../../helper/googleDriverHelper')
 const fs = require('fs')
-const UsersModel = require('../model/users.model')
 const errorService = require('../../helper/errorService')
 const until = require('../services/untilServices')
 const typeToken = {
@@ -142,7 +140,6 @@ exports.addImage = async (req, res) => {
                     return res.status(err.code).json(err);
                 }
                 driverGoogle.authorize(JSON.parse(content), async auth => {
-                    //checkExists
                     try {
                         if (!req.file) return res.status(500).send("image?")
                         let userFolder = await folderLv2Drive.findOne({idUser: req.user._id})
@@ -164,7 +161,8 @@ exports.addImage = async (req, res) => {
                             webViewLink: imageId.webViewLink
                         }))
                     } catch (error) {
-                        return res.send(error + "aa")
+                        const err = errorService.error.anyError(error, 404)
+                        return res.status(err.code).json(err)
                     }
                 });
             });
