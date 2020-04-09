@@ -98,11 +98,12 @@ const usersSchema = new Schema({
 			ref: 'Archivement'
 		}
 	],
-	ngTao: {type: String},
-	ngCapNhat: {type: String},
-	status: {type: String, enum: ["active", "deactive"], default: "active"}
-}, {timestamps: true})
-usersSchema.index({username: 1, email: 1}, {unique: true})
+	role: { type: String, enum: ['user', 'admin'], default: 'user' },
+	ngTao: { type: String },
+	ngCapNhat: { type: String },
+	status: { type: String, enum: ["active", "deactive"], default: "active" }
+}, { timestamps: true })
+usersSchema.index({ username: 1, email: 1 }, { unique: true })
 const user = mongoose.model('Users', usersSchema)
 user.type_login = type_login
 module.exports = user

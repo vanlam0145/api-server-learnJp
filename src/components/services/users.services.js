@@ -8,7 +8,7 @@ exports.UsersModel = UsersModel;
 exports.getList = async () => await UsersModel.find({}).exec()
 exports.getById = async (id) => await UsersModel.findById(id).exec()
 exports.create = async function (body) {
-    return await untilServices.exec(UsersModel.create({ ...body, hash: bcrypt.hashSync(body.password, 10) }))
+    return await untilServices.exec(UsersModel.create({ ...body, hash: bcrypt.hashSync(body.password, 10), role: 'user' }))
 }
 exports.login = async ({ username, password, email }) => {
     const user = await UsersModel.findOne({ ...(email ? { email } : { username }) })

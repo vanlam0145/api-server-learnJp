@@ -47,7 +47,7 @@ exports.login = (req, res) => {
                 ...result,
                 //avatar: avatarCtr.getImgUrl(response.avatar),
                 isGuest: false,
-                ...(!'' && { token: _createToken(result, '').token })
+                ...(!'' && { token: _createToken(result).token })
             });
         }
     })
@@ -79,11 +79,7 @@ exports.me = (req, res, next) => {
     else UsersService
         .getMe(_id)
         .then(response =>
-            res.json({
-                ...response,
-                //avatar: avatarCtr.getImgUrl(response.avatar)
-
-            })
+            res.json(response)
         )
         .catch(err => next(err))
 }
@@ -174,16 +170,18 @@ exports.setAvartar = async (req, res) => {
         res.status(result.code ? result.code : 200).json(result)
     })
 }
-const _createToken = (user, role = '') => {
+const _createToken = (user) => {
     const payload = {
         email: user.email,
         _id: user._id.toString(),
         type: typeToken.accessToken,
-        role
+        role: user.role
     }
     return {
-        token: jwt.sign(payload, !role ? process.env.TOKEN_SECRET : process.env.TOKEN_ADMIN_SECRET, {
-            expiresIn: !role ? process.env.TOKEN_EXPIRED : process.env.TOKEN_ADMIN_EXPIRED
+        token: jwt.sign(payload, process.env.TOKEN_SECRET, {
+            //expiresIn: process.env.TOKEN_EXPIRED
+            expiresIn: 30
+            //Giay
         })
     }
 }
