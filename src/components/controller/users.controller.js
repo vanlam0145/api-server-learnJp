@@ -179,8 +179,8 @@ const _createToken = (user) => {
     }
     return {
         token: jwt.sign(payload, process.env.TOKEN_SECRET, {
-            //expiresIn: process.env.TOKEN_EXPIRED
-            expiresIn: 30
+            expiresIn: process.env.TOKEN_EXPIRED
+            //expiresIn: 30
             //Giay
         })
     }
