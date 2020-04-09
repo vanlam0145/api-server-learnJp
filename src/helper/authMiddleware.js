@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 exports.authMiddleware = (roles) =>
     (req, res, next) => {
         try {
-            let token = req.headers.authorization.split(' ')[1]
+            let token = req.headers['x-access-token'] || req.headers.authorization.split(' ')[1]
             console.log(token, "token")
             if (token) {
                 let decode = jwt.verify(token, process.env.TOKEN_SECRET)
