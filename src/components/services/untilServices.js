@@ -1,23 +1,19 @@
 const Ajv = require('ajv');
 const AjvError = require("ajv-errors");
 const AjvKeyWords = require("ajv-keywords");
-const errorService = require('../../helper/errorService')
+const { ErrorService } = require('../../helper/errorService')
 exports.validateJson = (schema, body) => {
-    const ajv = new Ajv({allErrors: true, jsonPointers: true})
-    AjvError(ajv, {singleError: true});
+    const ajv = new Ajv({ allErrors: true, jsonPointers: true })
+    AjvError(ajv, { singleError: true });
     AjvKeyWords(ajv, ["switch"]);
     const valid = ajv.validate(schema, body);
-    return {
-        isValid: valid,
-        message: ajv.errorsText()
-    }
+    if (!valid) throw ErrorService.requestDataInvalid(ajv.errorsText())
 }
 exports.exec = async (promise) => {
     try {
         const result = await promise;
         if ((result === undefined || result === null) && !option.allowNull) {
-            console.log("nhay vao day?")
-            throw errorService.mgRecoredNotFound();
+            throw ErrorService.mgRecoredNotFound();
         }
         return result;
     } catch (err) {
@@ -27,8 +23,7 @@ exports.exec = async (promise) => {
         };
         console.log('err', err);
         if (err.code == 11000)
-            return errorService.error.anyError(err.errmsg, 500)
-        else return errorService.error.somethingWentWrong(err.errors)
-
+            throw ErrorService.somethingWentWrong(err.errmsg)
+        else throw ErrorService.somethingWentWrong(err.message)
     }
 }
