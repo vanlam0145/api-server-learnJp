@@ -1,5 +1,5 @@
 const UsersModel = require('../model/users.model')
-const errorService = require('../../helper/errorService')
+const { ErrorService } = require('../../helper/errorService')
 const untilServices = require('./untilServices')
 const imageGoogleDrive = require('../model/imageGoogleDrive.model')
 
@@ -13,17 +13,25 @@ exports.create = async function (body) {
 exports.login = async ({ username, password, email }) => {
     const user = await UsersModel.findOne({ ...(email ? { email } : { username }) })
     if (user && bcrypt.compareSync(password, user.hash)) {
-        const u_user = await UsersModel.findByIdAndUpdate({ _id: user._id, isGuest: false, ...(email ? { typeLogin: UsersModel.type_login.EM } : { typeLogin: UsersModel.type_login.UN }) })
+        const u_user = await UsersModel.findByIdAndUpdate({
+            _id: user._id,
+            isGuest: false,
+            ...(email ? { typeLogin: UsersModel.type_login.EM } : { typeLogin: UsersModel.type_login.UN })
+        })
         const { hash, ...userWithoutHash } = u_user.toJSON()
         return userWithoutHash
-    } else return errorService.error.loginFaild()
+    } else throw ErrorService.loginFaild()
 }
 exports.getMe = async (id) => {
     return await UsersModel.findById(id).select('-hash').lean()
 }
 exports.getCourseLatest = async (id) => {
     const user = await UsersModel.findById(id)
-        .populate({ path: 'courses', populate: { path: 'contents' }, options: { sort: '-create_at' } })
+        .populate({
+            path: 'courses',
+            populate: { path: 'contents' },
+            options: { sort: '-create_at' }
+        })
         .select('-hash')
     const { avatar, username, _id, courses, create_at, ...userExceptField } = user.toJSON()
     return {
@@ -37,6 +45,6 @@ exports.getCourseLatest = async (id) => {
 exports.setAvartar = async (idimage, userID) => {
     const image = await imageGoogleDrive.findOne({ id: idimage, idUser: userID }).exec()
     if (!image || !image.webViewLink)
-        return errorService.error.anyError("You don't have image!", 403)
-    return await UsersModel.updateOne({ _id: userID }, { $set: { avatar: image.webViewLink } }).lean().exec()
+        throw ErrorService.somethingWentWrong("You don't have image!")
+    return await UsersModel.findOneAndUpdate({ _id: userID }, { $set: { avatar: image.webViewLink } }, { new: true }).lean().exec()
 }

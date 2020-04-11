@@ -1,5 +1,5 @@
 const UsersService = require('../services/users.services')
-const usersSchema = require('./users.schema')
+const { createSchema } = require('./users.schema')
 const Types = require('mongoose').Types
 const multer = require('multer')
 const folderLv2Drive = require('../model/folderLv2Drive.model')
@@ -7,168 +7,91 @@ const driverGoogle = require('../../helper/googleDriverApi')
 const imageModel = require('../model/imageGoogleDrive.model')
 const driverGoogleHelper = require('../../helper/googleDriverHelper')
 const fs = require('fs')
-const errorService = require('../../helper/errorService')
+const { ErrorService } = require('../../helper/errorService')
 const until = require('../services/untilServices')
 const typeToken = {
     accessToken: 'access',
     refreshToken: 'refresh'
 }
 const jwt = require('jsonwebtoken')
-
-exports.getList = (req, res) => {
-    UsersService.getList()
-        .then(result => {
-            if (result) res.send(result)
-            else res.status(403).json(errorService.error.dataEmpty())
-        })
-        .catch(err => { if (err) throw err })
+const { resDataModify } = require('../../helper/until')
+exports.getList = async (req, res) => {
+    const result = await UsersService.getList()
+    resDataModify(res, result)
 }
-exports.getById = (req, res) => {
-    UsersService.getById(req.params.id)
-        .then(result => {
-            if (result) res.send(result)
-            else res.status(403).json(errorService.error.dataEmpty())
-        })
-        .catch(err => { if (err) throw err })
+exports.getById = async (req, res) => {
+    const result = await UsersService.getById(req.params.id)
+    resDataModify(res, result)
 }
-exports.create = (req, res) => {
-    const vali = until.validateJson((new usersSchema()).createSchema, req.body)
-    if (!vali.isValid) res.status(500).json({ mess: vali.message })
-    else UsersService.create(req.body).then(result => {
-        if (result.code) res.status(result.code).json(result)
-        else res.status(201).json(result)
+exports.create = async (req, res) => {
+    until.validateJson(createSchema, req.body)
+    const result = UsersService.create(req.body)
+    resDataModify(res, result)
+}
+exports.login = async (req, res) => {
+    const result = await UsersService.login(req.body)
+    resDataModify(res, {
+        ...result,
+        isGuest: false,
+        ...(!'' && { token: _createToken(result).token })
     })
 }
-exports.login = (req, res) => {
-    UsersService.login(req.body).then(result => {
-        if (result.code) res.status(result.code).json(result)
-        else {
-            res.status(200).json({
-                ...result,
-                //avatar: avatarCtr.getImgUrl(response.avatar),
-                isGuest: false,
-                ...(!'' && { token: _createToken(result).token })
-            });
-        }
-    })
+exports.me = async (req, res) => {
+    const result = UsersService.getMe(req.user._id)
+    resDataModify(res, result)
 }
-exports.au = (role = '') => async (req, res, next) => {
-    if (req.headers && req.headers.authorization) {
-        const token = req.headers.authorization.split(' ')[1]
-        if (token)
-            jwt.verify(token, !role ? process.env.TOKEN_SECRET : process.env.TOKEN_ADMIN_SECRET, async (err, decoded) => {
-                if (err)
-                    res.status(errorService.error.anyError(err.message, 401).code).json(errorService.error.anyError(err.message, 401))
-                else {
-                    const user = await UsersService.UsersModel.findById(decoded._id).select('-hash').lean()
-                    if (!user) res.status(errorService.error.badToken().code).json(errorService.error.badToken())
-                    else {
-                        req.user = user
-                        next()
-                    }
-                }
-            })
-        else res.status(errorService.error.badToken().code).json(errorService.error.badToken())
-    }
-    else res.status(errorService.error.anyError("Token is required", 500).code).json(errorService.error.anyError("Token is required", 500))
-}
-exports.me = (req, res, next) => {
-    const { _id } = req.user
-    if (!Types.ObjectId.isValid(_id))
-        console.log("1")
-    else UsersService
-        .getMe(_id)
-        .then(response =>
-            res.json(response)
-        )
-        .catch(err => next(err))
-}
-exports.getCourseLatest = (req, res) => {
-    UsersService.getCourseLatest(req.user._id)
-        .then(response => {
-            if (response.code) res.status(response.code).json({ response })
-            else
-                res.status(200).json({
-                    ...response,
-                    //avatar: avatarCtr.getImgUrl(response.avatar)
-                })
-        })
+exports.getCourseLatest = async (req, res) => {
+    const result = UsersService.getCourseLatest(req.user._id)
+    resDataModify(res, result)
 }
 exports.deleteImage = async (req, res) => {
-    fs.readFile('credentials.json', (err, content) => {
-        if (err) {
-            const err = errorService.error.anyError(`Error loading client secret file:', err`, 403)
-            return res.status(err.code).json(err);
+    try {
+        const content = fs.readFileSync('credentials.json')
+        const auth = await driverGoogle.authorize(JSON.parse(content))
+        const deleteFile = await driverGoogle.deleteFile(auth, req.params.id)
+        let image = ''
+        if (deleteFile.success && deleteFile.data == "") {
+            image = await imageModel.findOneAndDelete({ id: req.params.id })
         }
-        driverGoogle.authorize(JSON.parse(content), async auth => {
-            //checkExists
-            try {
-                const deleteFile = await driverGoogle.deleteFile(auth, req.params.id)
-                if (deleteFile.success && deleteFile.data == "") {
-                    return res.send(await imageModel.deleteOne({ id: req.params.id }))
-                }
-            } catch (error) {
-                return res.send(error + "aa")
-            }
-        });
-    });
+        resDataModify(res, image)
+    } catch (error) {
+        console.log(error)
+        throw ErrorService.somethingWentWrong(`Error loading client secret file:', ${error}`)
+    }
 }
 exports.addImage = async (req, res) => {
+    try {
+        //const data = await driverGoogleHelper.syncFolder(req, res)
+        //if (data.length == 0) throw ErrorService.somethingWentWrong("Drive not have Folder Avatar")
+        const file = await uploadFile(req, res)
+        const content = fs.readFileSync('credentials.json')
 
-    const data = await driverGoogleHelper.syncFolder(req, res)
-    if (data.length == 0) return res.status(400).send("Drive not have Folder Avatar")
-
-    uploadFile(req, res, (error) => {
-        if (error instanceof multer.MulterError) {
-            console.log("hear is err")
-            const err = errorService.error.anyError(`Error when trying to upload: ${error}`, 403)
-            return res.status(err.code).json(err);
+        const auth = await driverGoogle.authorize(JSON.parse(content))
+        if (!file) throw ErrorService.somethingWentWrong(`Gui len khong dung format "multipart/form-data"?`)
+        let userFolder = await folderLv2Drive.findOne({ idUser: req.user._id })
+        if (!userFolder) {
+            let userFolderID = await driverGoogle.createFolder(auth, req.user._id, "1YNBneKgkmHORdncYiCIZeeqpwiJ3DHdr")
+            userFolder = await folderLv2Drive.create({ idUser: req.user._id, id: userFolderID, name: req.user.username, parent: "1YNBneKgkmHORdncYiCIZeeqpwiJ3DHdr" })
         }
-        else {
-            if (error) {
-                const err = errorService.error.anyError(`Error when trying to upload: ${error}`, 403)
-                return res.status(err.code).json(err);
-            }
-            fs.readFile('credentials.json', (err, content) => {
-
-                if (err) {
-                    const err = errorService.error.anyError(`Error loading client secret file:', err`, 403)
-                    return res.status(err.code).json(err);
-                }
-                driverGoogle.authorize(JSON.parse(content), async auth => {
-                    try {
-                        if (!req.file) return res.status(500).json({ message: `Gui len khong dung format "multipart/form-data"?`, code: 500 })
-                        let userFolder = await folderLv2Drive.findOne({ idUser: req.user._id })
-                        if (!userFolder) {
-                            let userFolderID = await driverGoogle.createFolder(auth, req.user._id, "1YNBneKgkmHORdncYiCIZeeqpwiJ3DHdr")
-                            userFolder = await folderLv2Drive.create({ idUser: req.user._id, id: userFolderID, name: req.user.username, parent: "1YNBneKgkmHORdncYiCIZeeqpwiJ3DHdr" })
-                        }
-                        let countImage = await imageModel.count({ parent: userFolder.id })
-                        if (countImage > 10) {
-                            const err = errorService.error.anyError("You can only own 10 at most image", 501)
-                            return res.status(err.code).json(err)
-                        }
-                        let imageId = await driverGoogle.uploadFile(auth, req.file, userFolder.id)
-                        return res.send(await imageModel.create({
-                            name: req.file.originalname,
-                            id: imageId.id,
-                            parent: userFolder.id,
-                            idUser: req.user._id,
-                            webViewLink: imageId.webViewLink
-                        }))
-                    } catch (error) {
-                        const err = errorService.error.anyError(error, 404)
-                        return res.status(err.code).json(err)
-                    }
-                });
-            });
-        }
-    });
+        let countImage = await imageModel.count({ parent: userFolder.id })
+        if (countImage > 10)
+            throw ErrorService.somethingWentWrong("You can only own 10 at most image")
+        let imageId = await driverGoogle.uploadFile(auth, req.file, userFolder.id)
+        resDataModify(res, await imageModel.create({
+            name: req.file.originalname,
+            id: imageId.id,
+            parent: userFolder.id,
+            idUser: req.user._id,
+            webViewLink: imageId.webViewLink
+        }))
+    } catch (error) {
+        console.log(error)
+        throw ErrorService.somethingWentWrong(error)
+    }
 }
 exports.setAvartar = async (req, res) => {
-    UsersService.setAvartar(req.params.idimage, req.user._id).then(result => {
-        res.status(result.code ? result.code : 200).json(result)
-    })
+    const result = await UsersService.setAvartar(req.params.idimage, req.user._id)
+    resDataModify(res, result)
 }
 const _createToken = (user) => {
     const payload = {
@@ -199,5 +122,12 @@ let diskStorage = multer.diskStorage({
         callback(null, filename);
     }
 });
-let uploadFile = multer({ storage: diskStorage }).single("file");
-
+let uploadFileConfig = multer({ storage: diskStorage }).single("file");
+const uploadFile = (req, res) => {
+    return new Promise((resolve, reject) => {
+        uploadFileConfig(req, res, error => {
+            if (error) reject(error)
+            resolve(req.file)
+        })
+    })
+}
