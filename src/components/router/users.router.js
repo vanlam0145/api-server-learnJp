@@ -1,10 +1,11 @@
 'use strict'
 const route = require('express').Router()
 const usersCRL = require(`../controller/users.controller.js`)
+const imageGoogleDriveCRL = require('../controller/imageGoogleDrive.controller')
 const { authMiddleware } = require('../../helper/until')
 const { BaseRoute } = require('../../helper/baseRoute')
 const usersRouter = function () {
-    route.get('/', authMiddleware(['admin', 'user']), BaseRoute.routeModify(usersCRL.getList))
+    route.get('/', authMiddleware(['admin']), BaseRoute.routeModify(usersCRL.getList))
     //route.get('/:id', usersCRL.getById)
     route.post('/', BaseRoute.routeModify(usersCRL.create))
     route.post('/login', BaseRoute.routeModify(usersCRL.login))
@@ -14,8 +15,10 @@ const usersRouter = function () {
     route.put('/setAvartar/:idimage', authMiddleware(['user', 'admin']), BaseRoute.routeModify(usersCRL.setAvartar))
     //image
     route.post('/image', authMiddleware(['user', 'admin']), BaseRoute.routeModify(usersCRL.addImage))
+    route.get('/image', authMiddleware(['user', 'admin']), BaseRoute.routeModify(imageGoogleDriveCRL.getImageOfUser))
     route.delete('/image/:id', authMiddleware(['user', 'admin']), BaseRoute.routeModify(usersCRL.deleteImage))
-
+    route.delete('/:id', authMiddleware(['admin']), BaseRoute.routeModify(usersCRL.delete))
+    //route.put('/:id',authMiddleware(['admin','user']),BaseRoute.routeModify())
     return route
 }
 module.exports = usersRouter

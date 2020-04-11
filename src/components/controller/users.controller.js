@@ -25,7 +25,15 @@ exports.getById = async (req, res) => {
 }
 exports.create = async (req, res) => {
     until.validateJson(createSchema, req.body)
-    const result = UsersService.create(req.body)
+    const result = await UsersService.create(req.body)
+    resDataModify(res, result)
+}
+exports.update = async (req, res) => {
+    const result = await UsersService.update(req.user._id, req.body)
+    resDataModify(result)
+}
+exports.delete = async (req, res) => {
+    const result = await UsersService.delete(req.params.id)
     resDataModify(res, result)
 }
 exports.login = async (req, res) => {
@@ -37,11 +45,11 @@ exports.login = async (req, res) => {
     })
 }
 exports.me = async (req, res) => {
-    const result = UsersService.getMe(req.user._id)
+    const result = await UsersService.getMe(req.user._id)
     resDataModify(res, result)
 }
 exports.getCourseLatest = async (req, res) => {
-    const result = UsersService.getCourseLatest(req.user._id)
+    const result = await UsersService.getCourseLatest(req.user._id)
     resDataModify(res, result)
 }
 exports.deleteImage = async (req, res) => {

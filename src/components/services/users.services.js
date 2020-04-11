@@ -8,7 +8,18 @@ exports.UsersModel = UsersModel;
 exports.getList = async () => await UsersModel.find({}).exec()
 exports.getById = async (id) => await UsersModel.findById(id).exec()
 exports.create = async function (body) {
-    return await untilServices.exec(UsersModel.create({ ...body, hash: bcrypt.hashSync(body.password, 10), role: 'user' }))
+    let role = 'user'
+    if (process.env.CREATE_ADMIN_ACCOUNT) {
+        if (body.token == process.env.CREATE_ADMIN_ACCOUNT)
+            role = 'admin'
+    }
+    return await untilServices.exec(UsersModel.create({ ...body, hash: bcrypt.hashSync(body.password, 10), role }))
+}
+exports.update = async (id, body) => {
+    return await untilServices.exec(UsersModel.findByIdAndUpdate(id, { $set: body }, { new: true }))
+}
+exports.delete = async (id) => {
+    return await UsersModel.findByIdAndDelete(id)
 }
 exports.login = async ({ username, password, email }) => {
     const user = await UsersModel.findOne({ ...(email ? { email } : { username }) })
