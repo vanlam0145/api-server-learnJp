@@ -2,8 +2,6 @@ const ReportUserService = require('../services/reportUser.services')
 const { createSchema } = require('./reportUser.schema')
 const until = require('../services/untilServices')
 const { resDataModify } = require('../../helper/until')
-const UserModel = require('../model/users.model')
-const { ErrorService } = require('../../helper/errorService')
 exports.getList = async (req, res) => {
     const result = await ReportUserService.getList()
     resDataModify(res, result)
