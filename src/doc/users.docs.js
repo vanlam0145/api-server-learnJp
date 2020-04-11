@@ -182,7 +182,7 @@ exports.path = () => {
                 }
             }
         },
-        "users/get-courses-latest": {
+        "/users/get-courses-latest": {
             "get": {
                 "tags": ["Users"],
                 "security": [
@@ -204,7 +204,7 @@ exports.path = () => {
                 }
             },
         },
-        "users/setAvartar/{idimage}": {
+        "/users/setAvartar/{idimage}": {
             "put": {
                 "tags": ["Users"],
                 "security": [
@@ -236,7 +236,7 @@ exports.path = () => {
                 }
             },
         },
-        "users/image/{id}": {
+        "/users/image/{id}": {
             "delete": {
                 "tags": ["Users"],
                 "security": [
