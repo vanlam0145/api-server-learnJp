@@ -8,13 +8,13 @@ exports.path = () => {
     return {
         "/users": {
             "get": {
-                "tags": ["Users"],
+                "tags": ["AdminDashboard"],
                 "security": [
                     {
                         "bearerAuth": []
                     }
                 ],
-                "summary": "get all users",
+                "summary": "Lấy ra tất cả User với quyền admin",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -89,7 +89,7 @@ exports.path = () => {
         "/users/{id}": {
 
             "delete": {
-                "tags": ["Users"],
+                "tags": ["AdminDashboard"],
                 "security": [
                     {
                         "bearerAuth": []

@@ -23,7 +23,7 @@ exports.path = () => {
                 }
             },
             "post": {
-                "tags": ["Challenges"],
+                "tags": ["AdminDashboard"],
                 "summary": "create challenges",
                 "security": [
                     {

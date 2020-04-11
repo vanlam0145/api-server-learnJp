@@ -1,76 +1,78 @@
 exports.tag = () => {
     return {
-        "name": "ImageGoogleDrive",
-        "description": "API for imageGoogleDrive in the system"
+        "name": "AdminDashboard",
+        "description": "API for adminDashboard in the system"
     }
 }
 exports.path = () => {
     return {
-        "/imageGoogleDrive": {
-            "get": {
-                "tags": ["AdminDashboard"],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "summary": "get all imageGoogleDrive of user",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    // "422": {
-                    //   "$ref": "#/definitions/responses/UnprocessableEntity"
-                    // },
-                    // "401": {
-                    //   "$ref": "#/definitions/responses/UnauthorizedError"
-                    // }
-                }
-            },
-            // "post": {
-            //     "tags": ["ImageGoogleDrive"],
-            //     "summary": "create imageGoogleDrive",
-            //     "requestBody": {
-            //         "required": true,
-            //         "content": {
-            //             "application/json": {
-            //                 "schema": {
-            //                     "$ref": "#/definitions/ImageGoogleDrive"
-            //                 }
-            //             }
-            //         }
-            //     },
-            //     "responses": {
-            //         "200": {
-            //             "description": "OK",
-            //             "schema": {
-            //                 "$ref": "#/definitions/ImageGoogleDrive"
-            //             }
-            //         },
-            //         "422": {
-            //             "$ref": "#/definitions/responses/UnprocessableEntity"
-            //         }
-            //     }
-            // }
-        },
-        // "/imageGoogleDrive/{id}": {
+        // "/adminDashboard": {
         //     "get": {
-        //         "tags": ["ImageGoogleDrive"],
+        //         "tags": ["AdminDashboard"],
         //         "security": [
         //             {
         //                 "bearerAuth": []
         //             }
         //         ],
-        //         "summary": "get details imageGoogleDrive",
+        //         "summary": "get all adminDashboard",
+        //         "responses": {
+        //             "200": {
+        //                 "description": "OK"
+        //             },
+        //             // "422": {
+        //             //   "$ref": "#/definitions/responses/UnprocessableEntity"
+        //             // },
+        //             // "401": {
+        //             //   "$ref": "#/definitions/responses/UnauthorizedError"
+        //             // }
+        //         }
+        //     },
+        //     "post": {
+        //         "tags": ["AdminDashboard"],
+        //         "summary": "create adminDashboard",
+        //         "security": [
+        //             {
+        //                 "bearerAuth": []
+        //             }
+        //         ],
+        //         "requestBody": {
+        //             "required": true,
+        //             "content": {
+        //                 "application/json": {
+        //                     "schema": {
+        //                         "$ref": "#/definitions/AdminDashboard"
+        //                     }
+        //                 }
+        //             }
+        //         },
+        //         "responses": {
+        //             "200": {
+        //                 "description": "OK",
+        //                 "schema": {
+        //                     "$ref": "#/definitions/AdminDashboard"
+        //                 }
+        //             },
+        //             "422": {
+        //                 "$ref": "#/definitions/responses/UnprocessableEntity"
+        //             }
+        //         }
+        //     }
+        // },
+        // "/adminDashboard/{id}": {
+        //     "get": {
+        //         "tags": ["AdminDashboard"],
+        //         "security": [
+        //             {
+        //                 "bearerAuth": []
+        //             }
+        //         ],
+        //         "summary": "get details adminDashboard",
         //         "parameters": [
         //             {
-        //                 //them vao sau
-        //                 //   "name": "id",
-        //                 //   "in": "path",
-        //                 //   "description": "id of topic",
-        //                 //   "required": true,
-        //                 //   "type": "integer",
-        //                 //   "format": "int64"
+        //                   "name": "id",
+        //                   "in": "path",
+        //                   "description": "id of adminDashboard",
+        //                   "required": true,
         //             }
         //         ],
         //         "responses": {
@@ -86,28 +88,26 @@ exports.path = () => {
         //         }
         //     },
         //     "delete": {
-        //         "tags": ["ImageGoogleDrive"],
+        //         "tags": ["AdminDashboard"],
         //         "security": [
         //             {
         //                 "bearerAuth": []
         //             }
         //         ],
-        //         "summary": "delete imageGoogleDrive",
+        //         "summary": "delete adminDashboard",
         //         "parameters": [
         //             {
-        //                 // "name": "id",
-        //                 // "in": "path",
-        //                 // "description": "id of imageGoogleDrive",
-        //                 // "required": true,
-        //                 // "type": "integer",
-        //                 // "format": "int64"
+        //                 "name": "id",
+        //                 "in": "path",
+        //                 "description": "id of adminDashboard",
+        //                 "required": true,
         //             }
         //         ],
         //         "responses": {
         //             "200": {
         //                 "description": "OK",
         //                 "schema": {
-        //                     "$ref": "#/definitions/ImageGoogleDrive"
+        //                     "$ref": "#/definitions/AdminDashboard"
         //                 }
         //             },
         //             "422": {
@@ -119,19 +119,27 @@ exports.path = () => {
         //         }
         //     },
         //     "put": {
-        //         "tags": ["ImageGoogleDrive"],
+        //         "tags": ["AdminDashboard"],
         //         "security": [
         //             {
         //                 "bearerAuth": []
         //             }
         //         ],
-        //         "summary": "update details imageGoogleDrive",
+        //         "parameters": [
+        //             {
+        //                 "name": "id",
+        //                 "in": "path",
+        //                 "description": "id of adminDashboard",
+        //                 "required": true,
+        //             }
+        //         ],
+        //         "summary": "update details adminDashboard",
         //         "requestBody": {
         //             "required": true,
         //             "content": {
         //                 "application/json": {
         //                     "schema": {
-        //                         "$ref": "#/definitions/ImageGoogleDrive"
+        //                         "$ref": "#/definitions/AdminDashboard"
         //                     }
         //                 }
         //             }
@@ -140,7 +148,7 @@ exports.path = () => {
         //             "200": {
         //                 "description": "OK",
         //                 "schema": {
-        //                     "$ref": "#/definitions/ImageGoogleDrive"
+        //                     "$ref": "#/definitions/AdminDashboard"
         //                 }
         //             },
         //             "422": {
@@ -156,7 +164,7 @@ exports.path = () => {
 }
 exports.definition = () => {
     return {
-        "ImageGoogleDrive": {
+        "AdminDashboard": {
             "type": "object",
             "properties": {
                 "field0example": {
