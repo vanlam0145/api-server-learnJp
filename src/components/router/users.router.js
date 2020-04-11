@@ -1,7 +1,7 @@
 'use strict'
 const route = require('express').Router()
 const usersCRL = require(`../controller/users.controller.js`)
-const { authMiddleware } = require('../../helper/authMiddleware')
+const { authMiddleware } = require('../../helper/until')
 const usersRouter = function () {
     route.get('/', usersCRL.getList)
     //route.get('/:id', usersCRL.getById)

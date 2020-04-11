@@ -1,7 +1,7 @@
 'use strict'
 const route = require('express').Router()
 const challengesCRL = require(`../controller/challenges.controller.js`)
-const { authMiddleware } = require('../../helper/authMiddleware')
+const { authMiddleware } = require('../../helper/until')
 const challengesRouter = function () {
     route.get('/', challengesCRL.getList)
     route.get('/:id', challengesCRL.getById)
