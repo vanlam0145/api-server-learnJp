@@ -64,13 +64,10 @@ exports.path = () => {
                 "summary": "get details challenges",
                 "parameters": [
                     {
-                        //them vao sau
-                        //   "name": "id",
-                        //   "in": "path",
-                        //   "description": "id of topic",
-                        //   "required": true,
-                        //   "type": "integer",
-                        //   "format": "int64"
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of challenges",
+                        "required": true,
                     }
                 ],
                 "responses": {
