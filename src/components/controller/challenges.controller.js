@@ -19,13 +19,18 @@ exports.create = async (req, res) => {
     const result = await ChallengesService.create(req.body)
     resDataModify(res, result)
 }
+const checkPortOnline = (port) => {
+    if (port == 4000)
+        return `http://localhost:4000`
+    return `https://jp-server-kltn.herokuapp.com/`
+}
 const getImgUrl = image => {
     return image
-        ? `${process.env.SERVER_URL}:${process.env.PORT}/api/assets/challenge/photo/${image.toString()}`
+        ? `${checkPortOnline(process.env.PORT)}/api/assets/challenge/photo/${image.toString()}`
         : 'no'
 }
 const getAudioUrl = audio => {
     return audio
-        ? `${process.env.SERVER_URL}:${process.env.PORT}/api/assets/challenge/audio/${audio.toString()}`
+        ? `${checkPortOnline(process.env.PORT)}/api/assets/challenge/audio/${audio.toString()}`
         : 'no'
 }
