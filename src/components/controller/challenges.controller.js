@@ -20,9 +20,10 @@ exports.create = async (req, res) => {
     resDataModify(res, result)
 }
 const checkPortOnline = (port) => {
+    console.log(port)
     if (port == 4000)
         return `http://localhost:4000`
-    return `https://jp-server-kltn.herokuapp.com/`
+    return `https://jp-server-kltn.herokuapp.com`
 }
 const getImgUrl = image => {
     return image
