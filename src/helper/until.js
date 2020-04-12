@@ -27,3 +27,8 @@ exports.resErrorModify = (res, error) => {
 exports.resDataModify = (res, data, code = 200) => {
     return res.status(code).json({ code, result: data })
 }
+exports.serverWithPort=(port)=>{
+    if(port==4000)
+        return `http://localhost:4000`
+    return `https://jp-server-kltn.herokuapp.com`
+}

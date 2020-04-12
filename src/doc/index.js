@@ -1,5 +1,6 @@
 const fs = require('fs')
 const _ = require('lodash')
+const { serverWithPort } = require('../helper/until')
 const regisDocs = function () {
     const modules = fs.readdirSync(__dirname);
     modules.splice(modules.indexOf('index.js'), 1)
@@ -16,7 +17,7 @@ const regisDocs = function () {
         },
         "servers": [
             {
-                "url": "http://localhost:4000/api",
+                "url": `${serverWithPort(process.env.PORT)}/api`,
                 //"description": "With docker-compose and nginx proxy"
             }
         ],
