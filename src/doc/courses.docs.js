@@ -231,25 +231,21 @@ exports.definition = () => {
     return {
         "Course": {
             "type": "object",
-            "properties": {
-                "field0example": {
-                    "type": "string"
-                },
-                "field1example": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "field1examplefield0example": {
-                                "type": "string"
-                            },
-                            "field1examplefield1example": {
-                                "type": "string"
-                            }
-                        }
+            properties: {
+                title: { type: 'string' },
+                content: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            text: { type: 'string' },
+                            mean: { type: 'string' },
+                        },
+                        required: ['text', 'mean']
                     }
                 }
-            }
+            },
+            required: ['title', 'content']
         },
     }
 }
