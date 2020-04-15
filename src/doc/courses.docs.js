@@ -6,7 +6,7 @@ exports.tag = () => {
 }
 exports.path = () => {
     return {
-        "/course": {
+        "/courses": {
             "get": {
                 "tags": ["Course"],
                 "security": [
@@ -58,7 +58,7 @@ exports.path = () => {
                 }
             }
         },
-        "/course/{id}": {
+        "/courses/{id}": {
             "get": {
                 "tags": ["Course"],
                 "security": [
@@ -157,7 +157,7 @@ exports.path = () => {
             //     }
             // },
         },
-        "/course/{id}/learn": {
+        "/courses/{id}/learn": {
             "get": {
                 "tags": ["Course"],
                 "security": [
@@ -190,7 +190,7 @@ exports.path = () => {
                 }
             },
         },
-        "/course/set-contents": {
+        "/courses/set-contents": {
             "put": {
                 "tags": ["Course"],
                 "security": [

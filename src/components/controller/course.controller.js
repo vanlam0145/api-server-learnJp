@@ -13,7 +13,7 @@ exports.getById = async (req, res) => {
 }
 exports.create = async (req, res) => {
     until.validateJson(courseSchema.createSchema, req.body)
-    const result = await CourseService.create({ ...req.body, _id })
+    const result = await CourseService.create({ ...req.body, _id: req.user._id })
     resDataModify(res, result)
 }
 exports.learn = async (req, res) => {
