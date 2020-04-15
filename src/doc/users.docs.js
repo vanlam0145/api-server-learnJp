@@ -317,25 +317,13 @@ exports.definition = () => {
     return {
         "Users": {
             "type": "object",
-            "properties": {
-                "field0example": {
-                    "type": "string"
-                },
-                "field1example": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "field1examplefield0example": {
-                                "type": "string"
-                            },
-                            "field1examplefield1example": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
+            properties: {
+                email: { type: 'string', format: 'email',example:"*@gmail.com" },
+                username: { type: 'string' },
+                password: { type: 'string' },
+                phoneNumber: { type: 'string', minLength: 9,example:"0123456789" },
+            },
+            required: ['email', 'username', 'password']
         },
         "Login": {
             "type": "object",

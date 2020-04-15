@@ -13,7 +13,13 @@ exports.create = async function (body) {
         if (body.token == process.env.CREATE_ADMIN_ACCOUNT)
             role = 'admin'
     }
-    return await untilServices.exec(UsersModel.create({ ...body, hash: bcrypt.hashSync(body.password, 10), role }))
+    return await untilServices.exec(UsersModel.create({
+        username: body.username,
+        email: body.email,
+        hash: bcrypt.hashSync(body.password, 10),
+        role,
+        phoneNumber: body.phoneNumber
+    }))
 }
 exports.update = async (id, body) => {
     return await untilServices.exec(UsersModel.findByIdAndUpdate(id, { $set: body }, { new: true }))

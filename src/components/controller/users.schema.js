@@ -3,8 +3,11 @@ module.exports = class Schema {
     static createSchema = {
         type: 'object',
         properties: {
-            //name: {type: 'string'},
+            email: { type: 'string', format: 'email' },
+            username: { type: 'string' },
+            password: { type: 'string' },
+            phoneNumber: { type: 'string', minLength: 9 },
         },
-        //required: ['name']
+        required: ['email', 'username', 'password']
     }
 }
