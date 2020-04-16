@@ -12,7 +12,7 @@ module.exports = function (server) {
             socket.join(params.room);
             callback();
         })
-        socket.on('createComment', (newComment, callback) => {
+        socket.on('createComment', async (newComment, callback) => {
             authMiddlewareSocket(['admin', 'user'], socket, io)
             if (socket.auth) {
                 const ivalid = validateJsonSocket({
@@ -38,7 +38,7 @@ module.exports = function (server) {
             }
             callback()
         })
-        socket.on('updateComment', (updateComment, callback) => {
+        socket.on('updateComment', async (updateComment, callback) => {
             authMiddlewareSocket(['admin', 'user'], socket, io)
             if (socket.auth) {
                 const ivalid = validateJsonSocket({
