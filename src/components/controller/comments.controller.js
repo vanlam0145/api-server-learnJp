@@ -1,27 +1,26 @@
 const CommentsService = require('../services/comments.services')
-const commantSchema = require('./comments.schema')
+const { createSchema } = require('./comments.schema')
 const until = require('../services/untilServices')
-exports.getList = (req, res) => {
-    CommentsService.getList()
-        .then(result => {
-            if (result) res.send(result)
-            else res.send('kaka')
-        })
-        .catch(err => {if (err) throw err})
+const { resDataModify } = require('../../helper/until')
+exports.getList = async (req, res) => {
+    const result = await CommentsService.getList()
+    resDataModify(res, result)
 }
-exports.getById = (req, res) => {
-    CommentsService.getById(req.params.id)
-        .then(result => {
-            if (result) res.send(result)
-            else res.send('kaka')
-        })
-        .catch(err => {if (err) throw err})
+exports.getByChallenge = async (req, res) => {
+    console.log(req.params.id)
+    const result = await CommentsService.getListByChallange(req.params.id)
+    resDataModify(res, result)
 }
-exports.create = (req, res) => {
-    const vali = until.validateJson((new commantSchema()).createSchema, req.body)
-    if (!vali.isValid) res.status(500).json({mess: vali.message})
-    else CommentsService.create(req.body).then(result => {
-        if (result.code) res.status(result.code).json(result)
-        else res.status(201).json(result)
-    })
+exports.getById = async (req, res) => {
+    const result = await CommentsService.getById(req.params.id)
+    resDataModify(res, result)
+}
+exports.create = async (req, res) => {
+    until.validateJson(createSchema, req.body)
+    const result = await CommentsService.create(req.body)
+    resDataModify(res, result)
+}
+exports.delete = async (req, res) => {
+    const result = await CommentsService.delete(req.params.id)
+    resDataModify(res, result)
 }
