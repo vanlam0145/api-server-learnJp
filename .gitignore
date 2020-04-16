@@ -1,5 +1,5 @@
 node_modules
-react-socket
+react-socket/node_modules
 devHelper
 credentials.json
 .env
