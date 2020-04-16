@@ -1,5 +1,6 @@
 const { authMiddlewareSocket } = require('../helper/until')
 const { validateJsonSocket } = require('../components/services/untilServices')
+const CommentModel = require('../components/model/comments.model')
 const socketIO = require('socket.io');
 
 module.exports = function (server) {
@@ -8,29 +9,62 @@ module.exports = function (server) {
         authMiddlewareSocket(['admin', 'user'], socket, io)
         socket.on('join', (params, callback) => {
             authMiddlewareSocket(['admin', 'user'], socket, io)
-            console.log(socket.user, 'connect', params.room)
             socket.join(params.room);
             callback();
         })
-        socket.on('createComment', (comment, callback) => {
+        socket.on('createComment', (newComment, callback) => {
             authMiddlewareSocket(['admin', 'user'], socket, io)
             if (socket.auth) {
                 const ivalid = validateJsonSocket({
                     type: 'object',
                     properties: {
-                        name: { type: 'string' }
+                        room: { type: 'string' },
+                        comment: { type: 'string' }
                     },
-                    required: []
-                }, comment, io)
+                    required: ['room', 'comment']
+                }, newComment, io)
                 if (ivalid == true) {
-                    console.log(comment, socket.user);
-                    io.to(comment.room).emit('newComment', { ...comment })
+                    const commentSave = await CommentModel.create({
+                        idChallenge: newComment.room,
+                        content: newComment.comment,
+                        idUser: socket.user._id
+                    })
+                    io.to(comment.room).emit('newComment', {
+                        ...comment,
+                        userName: socket.user.username ? socket.user.username : socket.user.email,
+                        ...commentSave
+                    })
+                }
+            }
+            callback()
+        })
+        socket.on('updateComment', (updateComment, callback) => {
+            authMiddlewareSocket(['admin', 'user'], socket, io)
+            if (socket.auth) {
+                const ivalid = validateJsonSocket({
+                    type: 'object',
+                    properties: {
+                        _id: { type: 'string' },
+                        room: { type: 'string' },
+                        commentUp: { type: 'string' }
+                    },
+                    required: ['_id', 'room', 'commentUp']
+                }, updateComment, io)
+                if (ivalid == true) {
+                    const updateComment = await CommentModel.findByIdAndUpdate(updateComment._id, {
+                        content: updateComment.commentUp,
+                    }).lean()
+                    io.to(comment.room).emit('newComment', {
+                        ...comment,
+                        userName: socket.user.username ? socket.user.username : socket.user.email,
+                        ...updateComment
+                    })
                 }
             }
             callback()
         })
         socket.on('disconnect', () => {
-            console.log("dis")
+            console.log("disconnetDone!s")
         })
     })
 }

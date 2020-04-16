@@ -104,6 +104,7 @@ exports.setAvartar = async (req, res) => {
 const _createToken = (user) => {
     const payload = {
         email: user.email,
+        username: user.username,
         _id: user._id.toString(),
         type: typeToken.accessToken,
         role: user.role
