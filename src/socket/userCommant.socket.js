@@ -9,6 +9,7 @@ module.exports = function (server) {
         authMiddlewareSocket(['admin', 'user'], socket, io)
         socket.on('join', (params, callback) => {
             authMiddlewareSocket(['admin', 'user'], socket, io)
+            console.log(params,"join")
             socket.join(params.room);
             callback();
         })
@@ -24,6 +25,7 @@ module.exports = function (server) {
                     required: ['room', 'comment']
                 }, newComment, io)
                 if (ivalid == true) {
+                    console.log(newComment,"createComment")
                     const commentSave = await CommentModel.create({
                         idChallenge: newComment.room,
                         content: newComment.comment,
