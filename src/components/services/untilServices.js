@@ -9,6 +9,14 @@ exports.validateJson = (schema, body) => {
     const valid = ajv.validate(schema, body);
     if (!valid) throw ErrorService.requestDataInvalid(ajv.errorsText())
 }
+exports.validateJsonSocket = (schema, body, io) => {
+    const ajv = new Ajv({ allErrors: true, jsonPointers: true })
+    AjvError(ajv, { singleError: true });
+    AjvKeyWords(ajv, ["switch"]);
+    const valid = ajv.validate(schema, body);
+    if (!valid) io.emit('validation', ErrorService.requestDataInvalid(ajv.errorsText()))
+    else return true
+}
 exports.exec = async (promise) => {
     try {
         const result = await promise;

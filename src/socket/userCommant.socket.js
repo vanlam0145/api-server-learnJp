@@ -1,25 +1,36 @@
-module.exports = function (io, User) {
-    const users = new User();
+const { authMiddlewareSocket } = require('../helper/until')
+const { validateJsonSocket } = require('../components/services/untilServices')
+const socketIO = require('socket.io');
+
+module.exports = function (server) {
+    const io = socketIO(server);
     io.on('connection', (socket) => {
-        console.log('user connected');
+        authMiddlewareSocket(['admin', 'user'], socket, io)
         socket.on('join', (params, callback) => {
+            authMiddlewareSocket(['admin', 'user'], socket, io)
+            console.log(socket.user, 'connect', params.room)
             socket.join(params.room);
-            users.AddUserData(socket.id, params.name, params.room);
-            //console.log(users);
-            // secureIO.to(params.room).emit('usersList', users.GetUsersList(params.room));
             callback();
         })
         socket.on('createComment', (comment, callback) => {
-            console.log(comment);
-            io.to(comment.room).emit('newComment', {...comment})
+            authMiddlewareSocket(['admin', 'user'], socket, io)
+            if (socket.auth) {
+                const ivalid = validateJsonSocket({
+                    type: 'object',
+                    properties: {
+                        name: { type: 'string' }
+                    },
+                    required: []
+                }, comment, io)
+                if (ivalid == true) {
+                    console.log(comment, socket.user);
+                    io.to(comment.room).emit('newComment', { ...comment })
+                }
+            }
             callback()
         })
         socket.on('disconnect', () => {
             console.log("dis")
-            var user = users.RemoveUser(socket.id);
-            // if (user) {
-            //     io.to(user.room).emit('usersList', users.GetUsersList(user.room));
-            // }
         })
     })
 }

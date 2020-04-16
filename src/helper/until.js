@@ -20,6 +20,26 @@ exports.authMiddleware = (roles) =>
             return res.status(500).json({ message: 'JsonWebTokenError' })
         }
     }
+exports.authMiddlewareSocket = (roles, socket, io) => {
+    try {
+        socket.auth = false
+        let token = socket.handshake.query.token
+        if (token) {
+            let decode = jwt.verify(token, process.env.TOKEN_SECRET)
+            if (roles.indexOf(decode.role) == -1)
+                io.emit('authenticate', ErrorService.badToken)
+            else {
+                socket.user = decode
+                socket.auth = true
+            }
+        }
+        else io.emit('authenticate', ErrorService.unauthorized)
+    } catch (err) {
+        if (err.name == 'TokenExpiredError')
+            io.emit('authenticate', ErrorService.tokenExpired)
+        io.emit('authenticate', { code: 500, message: 'JsonWebTokenError' })
+    }
+}
 exports.resErrorModify = (res, error) => {
     console.log(error)
     return res.status(error.code).json(error)
@@ -27,8 +47,8 @@ exports.resErrorModify = (res, error) => {
 exports.resDataModify = (res, data, code = 200) => {
     return res.status(code).json({ code, result: data })
 }
-exports.serverWithPort=(port)=>{
-    if(port==4000)
+exports.serverWithPort = (port) => {
+    if (port == 4000)
         return `http://localhost:4000`
     return `https://jp-server-kltn.herokuapp.com`
 }
