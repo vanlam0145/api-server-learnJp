@@ -20,24 +20,24 @@ exports.authMiddleware = (roles) =>
             return res.status(500).json({ message: 'JsonWebTokenError' })
         }
     }
-exports.authMiddlewareSocket = (roles, socket, io) => {
+exports.authMiddlewareSocket = (roles, socket, io, room) => {
     try {
         socket.auth = false
         let token = socket.handshake.query.token
         if (token) {
             let decode = jwt.verify(token, process.env.TOKEN_SECRET)
             if (roles.indexOf(decode.role) == -1)
-                io.emit('authenticate', ErrorService.badToken)
+                io.to(room).emit('authenticate', ErrorService.badToken)
             else {
                 socket.user = decode
                 socket.auth = true
             }
         }
-        else io.emit('authenticate', ErrorService.unauthorized)
+        else io.to(room).emit('authenticate', ErrorService.unauthorized)
     } catch (err) {
         if (err.name == 'TokenExpiredError')
-            io.emit('authenticate', ErrorService.tokenExpired)
-        io.emit('authenticate', { code: 500, message: 'JsonWebTokenError' })
+            io.to(room).emit('authenticate', ErrorService.tokenExpired)
+        io.to(room).emit('authenticate', { code: 500, message: 'JsonWebTokenError' })
     }
 }
 exports.resErrorModify = (res, error) => {
