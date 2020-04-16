@@ -9,7 +9,7 @@ module.exports = function (server) {
         authMiddlewareSocket(['admin', 'user'], socket, io)
         socket.on('join', (params, callback) => {
             authMiddlewareSocket(['admin', 'user'], socket, io)
-            console.log(params,"join")
+            console.log(params, "join")
             socket.join(params.room);
             callback();
         })
@@ -25,14 +25,14 @@ module.exports = function (server) {
                     required: ['room', 'comment']
                 }, newComment, io)
                 if (ivalid == true) {
-                    console.log(newComment,"createComment")
+                    console.log(newComment, "createComment")
                     const commentSave = await CommentModel.create({
                         idChallenge: newComment.room,
                         content: newComment.comment,
                         idUser: socket.user._id
                     })
-                    io.to(comment.room).emit('newComment', {
-                        ...comment,
+                    io.to(newComment.room).emit('newComment', {
+                        ...newComment,
                         userName: socket.user.username ? socket.user.username : socket.user.email,
                         ...commentSave
                     })
@@ -53,13 +53,13 @@ module.exports = function (server) {
                     required: ['_id', 'room', 'commentUp']
                 }, updateComment, io)
                 if (ivalid == true) {
-                    const updateComment = await CommentModel.findByIdAndUpdate(updateComment._id, {
+                    const newCom = await CommentModel.findByIdAndUpdate(updateComment._id, {
                         content: updateComment.commentUp,
                     }).lean()
-                    io.to(comment.room).emit('newComment', {
+                    io.to(updateComment.room).emit('newComment', {
                         ...comment,
                         userName: socket.user.username ? socket.user.username : socket.user.email,
-                        ...updateComment
+                        ...newCom
                     })
                 }
             }
