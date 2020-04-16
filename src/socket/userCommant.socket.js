@@ -8,13 +8,13 @@ module.exports = function (server) {
     io.on('connection', (socket) => {
         //authMiddlewareSocket(['admin', 'user'], socket, io)
         socket.on('join', (params, callback) => {
-            authMiddlewareSocket(['admin', 'user'], socket, io)
+            authMiddlewareSocket(['admin', 'user'], socket, io, params.room)
             console.log(params, "join")
             socket.join(params.room);
             callback();
         })
         socket.on('createComment', async (newComment, callback) => {
-            authMiddlewareSocket(['admin', 'user'], socket, io)
+            authMiddlewareSocket(['admin', 'user'], socket, io, newComment.room)
             if (socket.auth) {
                 const ivalid = validateJsonSocket({
                     type: 'object',
@@ -23,7 +23,7 @@ module.exports = function (server) {
                         content: { type: 'string' }
                     },
                     required: ['room', 'comment']
-                }, newComment, io)
+                }, newComment, io, newComment.room)
                 if (ivalid == true) {
                     console.log(newComment, "createComment")
                     const commentSave = (await CommentModel.create({
@@ -41,7 +41,7 @@ module.exports = function (server) {
             callback()
         })
         socket.on('updateComment', async (updateComment, callback) => {
-            authMiddlewareSocket(['admin', 'user'], socket, io)
+            authMiddlewareSocket(['admin', 'user'], socket, io, updateComment.room)
             if (socket.auth) {
                 const ivalid = validateJsonSocket({
                     type: 'object',
@@ -51,7 +51,7 @@ module.exports = function (server) {
                         commentUp: { type: 'string' }
                     },
                     required: ['_id', 'room', 'commentUp']
-                }, updateComment, io)
+                }, updateComment, io, updateComment.room)
                 if (ivalid == true) {
                     const newCom = await CommentModel.findByIdAndUpdate(updateComment._id, {
                         content: updateComment.commentUp,
