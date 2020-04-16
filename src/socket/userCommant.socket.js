@@ -26,11 +26,11 @@ module.exports = function (server) {
                 }, newComment, io)
                 if (ivalid == true) {
                     console.log(newComment, "createComment")
-                    const commentSave = await CommentModel.create({
+                    const commentSave = (await CommentModel.create({
                         idChallenge: newComment.room,
                         content: newComment.comment,
                         idUser: socket.user._id
-                    })
+                    })).toJSON()
                     io.to(newComment.room).emit('newComment', {
                         ...newComment,
                         userName: socket.user.username ? socket.user.username : socket.user.email,
