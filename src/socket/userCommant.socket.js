@@ -6,7 +6,7 @@ const socketIO = require('socket.io');
 module.exports = function (server) {
     const io = socketIO(server);
     io.on('connection', (socket) => {
-        authMiddlewareSocket(['admin', 'user'], socket, io)
+        //authMiddlewareSocket(['admin', 'user'], socket, io)
         socket.on('join', (params, callback) => {
             authMiddlewareSocket(['admin', 'user'], socket, io)
             console.log(params, "join")
@@ -20,7 +20,7 @@ module.exports = function (server) {
                     type: 'object',
                     properties: {
                         room: { type: 'string' },
-                        comment: { type: 'string' }
+                        content: { type: 'string' }
                     },
                     required: ['room', 'comment']
                 }, newComment, io)
