@@ -38,7 +38,7 @@ module.exports = function (server) {
                     })
                 }
             }
-            callback()
+            callback(newComment.room)
         })
         socket.on('updateComment', async (updateComment, callback) => {
             authMiddlewareSocket(['admin', 'user'], socket, io, updateComment.room)
