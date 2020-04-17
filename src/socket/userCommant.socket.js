@@ -31,6 +31,7 @@ module.exports = function (server) {
                         content: newComment.comment,
                         idUser: socket.user._id
                     })).toJSON()
+                    console.log(newComment.room,"emit to")
                     io.to(newComment.room).emit('newComment', {
                         ...newComment,
                         userName: socket.user.username ? socket.user.username : socket.user.email,
