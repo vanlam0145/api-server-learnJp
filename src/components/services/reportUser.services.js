@@ -10,13 +10,10 @@ exports.getById = async (id) => {
     return await ReportUserModel.findById(id).exec()
 }
 exports.create = async function (body) {
-    const accusedUser = await UserModel.findById(body.accusedId)
     const comment = await CommentModel.findById(body.commentId)
-    if (!accusedUser)
-        throw ErrorService.somethingWentWrong("Không tìm thấy người dùng bị report")
     if (!comment)
         throw ErrorService.somethingWentWrong("Không tìm thấy comment bị report")
-    return await untilServices.exec(ReportUserModel.create(body))
+    return await untilServices.exec(ReportUserModel.create({ ...body, accusedId: comment.idUser }))
 }
 exports.update = async (req) => {
     if (req.user.role == 'user') {

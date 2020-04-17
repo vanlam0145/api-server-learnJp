@@ -4,11 +4,10 @@ module.exports = class Schema {
     static createSchema = {
         type: 'object',
         properties: {
-            accusedId: { type: 'string' },
             commentId: { type: 'string' },
             content: { type: 'string' }
         },
-        required: ['accusedId', 'commentId', 'content']
+        required: ['commentId', 'content']
     }
 
 }
