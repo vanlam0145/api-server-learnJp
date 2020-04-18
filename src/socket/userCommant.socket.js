@@ -56,7 +56,7 @@ module.exports = function (server) {
                 if (ivalid == true) {
                     const newCom = await CommentModel.findByIdAndUpdate(updateComment._id, {
                         content: updateComment.commentUp,
-                    }).lean()
+                    }, { new: true }).lean()
                     io.to(updateComment.room).emit('newComment', {
                         room: updateComment.room,
                         userName: socket.user.username ? socket.user.username : socket.user.email,
