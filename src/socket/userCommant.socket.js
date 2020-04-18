@@ -42,6 +42,7 @@ module.exports = function (server) {
         })
         socket.on('updateComment', async (updateComment, callback) => {
             authMiddlewareSocket(['admin', 'user'], socket, io, updateComment.room)
+            console.log(updateComment, "updateComment")
             if (socket.auth) {
                 const ivalid = validateJsonSocket({
                     type: 'object',
