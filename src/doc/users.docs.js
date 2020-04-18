@@ -8,7 +8,7 @@ exports.path = () => {
     return {
         "/users": {
             "get": {
-                "tags": ["AdminDashboard"],
+                "tags": ["Users"],
                 "security": [
                     {
                         "bearerAuth": []

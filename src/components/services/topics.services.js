@@ -2,7 +2,7 @@ const TopicsModel = require('../model/topics.model')
 const { ErrorService } = require('../../helper/errorService')
 const untilServices = require('./untilServices')
 exports.TopicsModel = TopicsModel;
-exports.getList = async () => await TopicsModel.find({}).exec()
+exports.getList = async () => await TopicsModel.find({}).sort({ number: 1 }).exec()
 exports.getById = async (id) => await TopicsModel.findById(id).exec()
 exports.create = async function (body) {
     const num = await TopicsModel.count({})

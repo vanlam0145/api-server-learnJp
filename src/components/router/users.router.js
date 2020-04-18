@@ -5,7 +5,7 @@ const imageGoogleDriveCRL = require('../controller/imageGoogleDrive.controller')
 const { authMiddleware } = require('../../helper/until')
 const { BaseRoute } = require('../../helper/baseRoute')
 const usersRouter = function () {
-    route.get('/', authMiddleware(['admin']), BaseRoute.routeModify(usersCRL.getList))
+    route.get('/', authMiddleware(['admin','user']), BaseRoute.routeModify(usersCRL.getList))
     //route.get('/:id', usersCRL.getById)
     route.post('/', BaseRoute.routeModify(usersCRL.create))
     route.post('/login', BaseRoute.routeModify(usersCRL.login))

@@ -31,7 +31,6 @@ module.exports = function (server) {
                         content: newComment.comment,
                         idUser: socket.user._id
                     })).toJSON()
-                    console.log(newComment.room,"emit to")
                     io.to(newComment.room).emit('newComment', {
                         ...newComment,
                         userName: socket.user.username ? socket.user.username : socket.user.email,
@@ -57,8 +56,8 @@ module.exports = function (server) {
                     const newCom = await CommentModel.findByIdAndUpdate(updateComment._id, {
                         content: updateComment.commentUp,
                     }).lean()
-                    io.to(updateComment.room).emit('newCommentUpdate', {
-                        ...comment,
+                    io.to(updateComment.room).emit('newComment', {
+                        room: updateComment.room,
                         userName: socket.user.username ? socket.user.username : socket.user.email,
                         ...newCom
                     })
