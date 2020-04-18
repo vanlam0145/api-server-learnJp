@@ -52,3 +52,4 @@ exports.serverWithPort = (port) => {
         return `http://localhost:4000`
     return `https://jp-server-kltn.herokuapp.com`
 }
+exports.getDataDefault = (v, d) => v || d
