@@ -71,12 +71,29 @@ const usersSchema = new Schema({
 		type: Number,
 		default: 1
 	},
-	friends: [
-		{
-			type: mongoose.Schema.ObjectId,
+	request: [{
+		userId: {
+			type: Schema.Types.ObjectId,
 			ref: 'User'
-		}
-	],
+		},
+		username: { type: String }
+	}],
+	friends: [{
+		userId: {
+			type: Schema.Types.ObjectId,
+			ref: 'User'
+		},
+		username: { type: String }
+	}],
+	sentRequest: [{
+		userId: {
+			type: Schema.Types.ObjectId,
+			ref: 'User'
+		},
+		username: { type: String }
+	}],
+	totalRequest: { type: Number },
+	totalSenderRequest: { type: Number },
 	avatar: {
 		type: String
 	},

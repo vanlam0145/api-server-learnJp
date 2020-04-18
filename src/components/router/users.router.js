@@ -5,8 +5,11 @@ const imageGoogleDriveCRL = require('../controller/imageGoogleDrive.controller')
 const { authMiddleware } = require('../../helper/until')
 const { BaseRoute } = require('../../helper/baseRoute')
 const usersRouter = function () {
-    route.get('/', authMiddleware(['admin','user']), BaseRoute.routeModify(usersCRL.getList))
-    //route.get('/:id', usersCRL.getById)
+    route.get('/', authMiddleware(['admin', 'user']), BaseRoute.routeModify(usersCRL.getList))
+    route.get('/notFriend', authMiddleware(['admin', 'user']), BaseRoute.routeModify(usersCRL.notFriend))
+    route.get('/senderAddFriend', authMiddleware(['admin', 'user']), BaseRoute.routeModify(usersCRL.senderAddFriend))
+    route.get('/requestAddFriend', authMiddleware(['admin', 'user']), BaseRoute.routeModify(usersCRL.requestAddFriend))
+
     route.post('/', BaseRoute.routeModify(usersCRL.create))
     route.post('/login', BaseRoute.routeModify(usersCRL.login))
     route.get('/me', authMiddleware(['user', 'admin']), BaseRoute.routeModify(usersCRL.me))
@@ -19,6 +22,7 @@ const usersRouter = function () {
     route.delete('/image/:id', authMiddleware(['user', 'admin']), BaseRoute.routeModify(usersCRL.deleteImage))
     route.delete('/:id', authMiddleware(['admin']), BaseRoute.routeModify(usersCRL.delete))
     //route.put('/:id',authMiddleware(['admin','user']),BaseRoute.routeModify())
+    route.get('/:id', BaseRoute.routeModify(usersCRL.getById))
     return route
 }
 module.exports = usersRouter

@@ -19,6 +19,18 @@ exports.getList = async (req, res) => {
     const result = await UsersService.getList()
     resDataModify(res, result)
 }
+exports.notFriend = async (req, res) => {
+    const result = await UsersService.notFriend(req.user._id)
+    resDataModify(res, result)
+}
+exports.senderAddFriend = async (req, res) => {
+    const result = await UsersService.senderAddFriend(req.user._id)
+    resDataModify(res, result)
+}
+exports.requestAddFriend = async (req, res) => {
+    const result = await UsersService.requestAddFriend(req.user._id)
+    resDataModify(res, result)
+}
 exports.getById = async (req, res) => {
     const result = await UsersService.getById(req.params.id)
     resDataModify(res, result)

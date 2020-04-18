@@ -1,11 +1,28 @@
 const UsersModel = require('../model/users.model')
 const { ErrorService } = require('../../helper/errorService')
 const untilServices = require('./untilServices')
+const { getDataDefault } = require('../../helper/until')
 const imageGoogleDrive = require('../model/imageGoogleDrive.model')
-
+const _ = require('lodash')
 const bcrypt = require('bcryptjs')
 exports.UsersModel = UsersModel;
 exports.getList = async () => await UsersModel.find({}).exec()
+exports.notFriend = async (id) => {
+    const user = getDataDefault(await UsersModel.findById(id).lean(), [])
+    let send = getDataDefault(user.sentRequest, []).map(va => va.userId)
+    let friend = getDataDefault(user.friends, []).map(va => va.userId)
+    return await UsersModel.find({ _id: { $nin: _.union(_.concat(send, friend, [id])) } }).lean()
+}
+exports.senderAddFriend = async (id) => {
+    const user = getDataDefault(await UsersModel.findById(id).lean(), [])
+    let send = getDataDefault(user.sentRequest, []).map(va => va.userId)
+    return await UsersModel.find({ _id: { $in: send } }).lean()
+}
+exports.requestAddFriend = async (id) => {
+    const user = getDataDefault(await UsersModel.findById(id).lean(), [])
+    let re = getDataDefault(user.request, []).map(va => va.userId)
+    return await UsersModel.find({ _id: { $in: re } }).lean()
+}
 exports.getById = async (id) => await UsersModel.findById(id).exec()
 exports.create = async function (body) {
     let role = 'user'
