@@ -7,6 +7,7 @@ const driverGoogle = require('../../helper/googleDriverApi')
 const imageModel = require('../model/imageGoogleDrive.model')
 const driverGoogleHelper = require('../../helper/googleDriverHelper')
 const fs = require('fs')
+const path = require('path')
 const { ErrorService } = require('../../helper/errorService')
 const until = require('../services/untilServices')
 const typeToken = {
@@ -81,6 +82,9 @@ exports.deleteImage = async (req, res) => {
 }
 exports.addImage = async (req, res) => {
     try {
+        if (!fs.existsSync(path.join(__dirname, '../../../uploads'))) {
+            fs.mkdir('./uploads', { recursive: true }, (err) => { if (err) throw err })
+        }
         //const data = await driverGoogleHelper.syncFolder(req, res)
         //if (data.length == 0) throw ErrorService.somethingWentWrong("Drive not have Folder Avatar")
         const file = await uploadFile(req, res)
