@@ -53,3 +53,9 @@ exports.serverWithPort = (port) => {
     return `https://jp-server-kltn.herokuapp.com`
 }
 exports.getDataDefault = (v, d) => v || d
+exports.addZero = (name) => {
+    let newNum = name + ""
+    while (newNum.toString().length < 3)
+        newNum = "0" + newNum
+    return newNum
+}

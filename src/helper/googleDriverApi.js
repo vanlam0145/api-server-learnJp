@@ -57,24 +57,24 @@ function getAccessToken(oAuth2Client) {
     })
 
 }
-exports.listFiles = function (auth) {
+exports.listFiles = function (auth,
+    idRoot = '0AFiqKTBqK4BQUk9PVA',
+    mimeType = '') {
     const drive = google.drive({ version: 'v3', auth });
-    drive.files.list({
-        q: "trashed = false" && "mimeType='application/vnd.google-apps.folder'",
-        fields: 'nextPageToken, files(*)',
-    }, (err, res) => {
-        if (err) return console.log('The API returned an error: ' + err);
-        const files = res.data.files;
-        if (files.length) {
-            console.log('Files:');
-            files.map((file) => {
-                console.log(file)
-                console.log(`${file.name} (${file.id})${file.mimeType}`);
-            });
-        } else {
-            console.log('No files found.');
-        }
-    });
+    return new Promise((resolve, reject) => {
+        drive.files.list({
+            q: `trashed = false ${mimeType ? `and mimeType = '${mimeType}'` : ""} and '${idRoot}' in parents and name != 'avatar'`,
+            fields: 'nextPageToken, files(*)',
+        }, (err, res) => {
+            if (err) reject(err)
+            const files = res.data.files;
+            if (files.length) {
+                resolve(files)
+            } else {
+                reject('No files found.');
+            }
+        });
+    })
 }
 exports.uploadFile = function (auth, fileimage, parents) {
     return new Promise((resolve, reject) => {
