@@ -24,7 +24,9 @@ app.use(morgan('dev'))
 app.use('/api/assets', express.static(path.join(__dirname, 'assets')))
 app.use('/api/docs', swaggerui.serve, swaggerui.setup(doc, { explorer: true }))
 app.use('/api', route)
-
+app.get('/google06408e9b745b9367.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'google06408e9b745b9367.html'))
+})
 const server = http.createServer(app)
 
 require('./src/socket')(server)
