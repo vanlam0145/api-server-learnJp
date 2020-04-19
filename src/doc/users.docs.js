@@ -398,12 +398,6 @@ exports.path = () => {
                         "schema": {
                             "$ref": "#/definitions/Users"
                         }
-                    },
-                    "422": {
-                        "$ref": "#/definitions/responses/UnprocessableEntity"
-                    },
-                    "401": {
-                        "$ref": "#/definitions/responses/UnauthorizedError"
                     }
                 }
             }
