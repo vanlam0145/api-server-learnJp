@@ -4,7 +4,6 @@ const express = require('express');
 const app = express();
 const path = require('path')
 const route = require('./src/components/router')
-const mongoose = require('mongoose')
 const morgan = require('morgan')
 
 const bodyParser = require('body-parser');
@@ -12,18 +11,12 @@ const swaggerui = require('swagger-ui-express')
 const http = require('http')
 const cors = require('cors');
 
+require('./src/helper/dbConnect')
+
 const doc = require('./src/doc')
 const { serverWithPort } = require('./src/helper/until')
 const port = process.env.PORT
-mongoose.connect('mongodb+srv://admin:admin@cluster0-cgqit.mongodb.net/learnJP?retryWrites=true&w=majority', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false
-}, (err) => {
-    if (err)
-        throw err
-    console.log('mongoo connect!')
-});
+
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
