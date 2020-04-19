@@ -27,6 +27,6 @@ app.use('/api', route)
 
 const server = http.createServer(app)
 
-require('./src/socket/userCommant.socket')(server)
+require('./src/socket')(server)
 server.listen(port, () => { console.log(`server runing : ${serverWithPort(port)}`) })
 

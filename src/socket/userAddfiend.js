@@ -13,7 +13,7 @@ module.exports = function (server) {
             if (clients[socket.user._id]) clients[socket.user._id].push(socket.id)
             else clients[socket.user._id] = [socket.id]
 
-            socket.on(socketConst.onAddFriend, (createAddFriend, callback) => {
+            socket.on(socketConst.onAddFriend, async (createAddFriend, callback) => {
                 authMiddlewareSocket(['admin', 'user'], socket, io)
                 if (socket.auth) {
                     const ivalid = validateJsonSocket({
@@ -93,7 +93,7 @@ module.exports = function (server) {
                 }
                 callback()
             })
-            socket.on(socketConst.onRejectAddFriend, (userRejected, callback) => {
+            socket.on(socketConst.onRejectAddFriend, async (userRejected, callback) => {
                 authMiddlewareSocket(['admin', 'user'], socket, io)
                 if (socket.auth) {
                     const ivalid = validateJsonSocket({
@@ -140,7 +140,7 @@ module.exports = function (server) {
                 }
                 callback()
             })
-            socket.on(socketConst.onAcceptAddFriend, (accecpt, callback) => {
+            socket.on(socketConst.onAcceptAddFriend, async (accecpt, callback) => {
                 authMiddlewareSocket(['admin', 'user'], socket, io)
                 if (socket.auth) {
                     const ivalid = validateJsonSocket({
@@ -210,7 +210,7 @@ module.exports = function (server) {
                 }
                 callback()
             })
-            socket.on(socketConst.onReciverReject, (reciverReject, callback) => {
+            socket.on(socketConst.onReciverReject, async (reciverReject, callback) => {
                 authMiddlewareSocket(['admin', 'user'], socket, io)
                 if (socket.auth) {
                     const ivalid = validateJsonSocket({
