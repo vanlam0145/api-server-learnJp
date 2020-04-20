@@ -47,11 +47,12 @@ exports.delete = async (id) => {
 exports.login = async ({ username, password, email }) => {
     const user = await UsersModel.findOne({ ...(email ? { email } : { username }) })
     if (user && bcrypt.compareSync(password, user.hash)) {
-        const u_user = await UsersModel.findByIdAndUpdate({
+        const u_user = await UsersModel.findByIdAndUpdate(user._id, {
             _id: user._id,
             isGuest: false,
+            $inc: { countOnline: 1 },
             ...(email ? { typeLogin: UsersModel.type_login.EM } : { typeLogin: UsersModel.type_login.UN })
-        })
+        }, { new: true })
         const { hash, ...userWithoutHash } = u_user.toJSON()
         return userWithoutHash
     } else throw ErrorService.loginFaild()
