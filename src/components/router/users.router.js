@@ -6,9 +6,9 @@ const { authMiddleware } = require('../../helper/until')
 const { BaseRoute } = require('../../helper/baseRoute')
 const usersRouter = function () {
     route.get('/', authMiddleware(['admin', 'user']), BaseRoute.routeModify(usersCRL.getList))
-    route.get('/notFriend', authMiddleware(['admin', 'user']), BaseRoute.routeModify(usersCRL.notFriend))
-    route.get('/senderAddFriend', authMiddleware(['admin', 'user']), BaseRoute.routeModify(usersCRL.senderAddFriend))
-    route.get('/requestAddFriend', authMiddleware(['admin', 'user']), BaseRoute.routeModify(usersCRL.requestAddFriend))
+    //route.get('/notFriend', authMiddleware(['admin', 'user']), BaseRoute.routeModify(usersCRL.notFriend))
+    //route.get('/senderAddFriend', authMiddleware(['admin', 'user']), BaseRoute.routeModify(usersCRL.senderAddFriend))
+    //route.get('/requestAddFriend', authMiddleware(['admin', 'user']), BaseRoute.routeModify(usersCRL.requestAddFriend))
 
     route.post('/', BaseRoute.routeModify(usersCRL.create))
     route.post('/login', BaseRoute.routeModify(usersCRL.login))
@@ -17,7 +17,7 @@ const usersRouter = function () {
     //avartar
     route.put('/setAvartar/:idimage', authMiddleware(['user', 'admin']), BaseRoute.routeModify(usersCRL.setAvartar))
     //image
-    route.post('/image', authMiddleware(['user', 'admin']), BaseRoute.routeModify(usersCRL.addImage))
+    //route.post('/image', authMiddleware(['user', 'admin']), BaseRoute.routeModify(usersCRL.addImage))
     route.get('/image', authMiddleware(['user', 'admin']), BaseRoute.routeModify(imageGoogleDriveCRL.getImageOfUser))
     route.delete('/image/:id', authMiddleware(['user', 'admin']), BaseRoute.routeModify(usersCRL.deleteImage))
     route.delete('/:id', authMiddleware(['admin']), BaseRoute.routeModify(usersCRL.delete))
