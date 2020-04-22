@@ -2,6 +2,11 @@ const socketIO = require('socket.io');
 
 module.exports = function (server) {
     const io = socketIO(server);
-    require('./userCommant.socket')(server, io)
-    require('./userAddfiend')(server, io)
+    let clients = {}
+    io.on('connection', (socket) => {
+        console.log("hear!")
+        require('./userCommant.socket')(socket, io)
+        require('./userAddfiend')(socket, io, clients)
+    })
+    //
 }
