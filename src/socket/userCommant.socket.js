@@ -1,10 +1,8 @@
 const { authMiddlewareSocket } = require('../helper/until')
 const { validateJsonSocket } = require('../components/services/untilServices')
 const CommentModel = require('../components/model/comments.model')
-const socketIO = require('socket.io');
 
-module.exports = function (server) {
-    const io = socketIO(server);
+module.exports = function (server,io) {
     io.on('connection', (socket) => {
         //authMiddlewareSocket(['admin', 'user'], socket, io)
         socket.on('join', (params, callback) => {

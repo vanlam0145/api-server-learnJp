@@ -1,7 +1,7 @@
 node_modules
 react-socket/node_modules
 devHelper
-credentials.json
-.env
-token.json
+#credentials.json
+#.env
+#token.json
 script

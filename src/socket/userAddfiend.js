@@ -1,11 +1,9 @@
 const { authMiddlewareSocket } = require('../helper/until')
 const { validateJsonSocket } = require('../components/services/untilServices')
 const UserModel = require('../components/model/users.model')
-const socketIO = require('socket.io');
 const { socketConst } = require('./const')
 const _ = require('lodash')
-module.exports = function (server) {
-    const io = socketIO(server);
+module.exports = function (server, io) {
     let clients = {}
     io.on('connection', (socket) => {
         authMiddlewareSocket(['admin', 'user'], socket, io)
