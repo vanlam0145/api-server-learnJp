@@ -10,8 +10,10 @@ exports.getList = async () => await UsersModel.find({}).exec()
 exports.notFriend = async (id) => {
     const user = getDataDefault(await UsersModel.findById(id).lean(), [])
     let send = getDataDefault(user.sentRequest, []).map(va => va.userId)
+    let request = getDataDefault(user.request, []).map(va => va.userId)
     let friend = getDataDefault(user.friends, []).map(va => va.userId)
-    return await UsersModel.find({ _id: { $nin: _.union(_.concat(send, friend, [id])) } }).lean()
+
+    return await UsersModel.find({ _id: { $nin: _.union(_.concat(send, friend, request, [id])) } }).lean()
 }
 exports.senderAddFriend = async (id) => {
     const user = getDataDefault(await UsersModel.findById(id).lean(), [])

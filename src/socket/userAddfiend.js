@@ -5,7 +5,9 @@ const { socketConst } = require('./const')
 const _ = require('lodash')
 module.exports = function (socket, io, clients) {
     authMiddlewareSocket(['admin', 'user'], socket, io)
+    console.log("chay vao day")
     if (socket.auth) {
+        console.log("on")
         if (clients[socket.user._id]) clients[socket.user._id].push(socket.id)
         else clients[socket.user._id] = [socket.id]
 
@@ -70,8 +72,8 @@ module.exports = function (socket, io, clients) {
                             clients[socket.user._id].forEach(socketId => {
                                 io.sockets.connected[socketId].emit(socketConst.emitAddFriend,
                                     {
-                                        userSender: createAddFriend.receiverId,
-                                        userSenderName: createAddFriend.receiverName
+                                        userSender: socket.user._id,
+                                        userSenderName: socket.user.username
                                     })
                             });
                         }
@@ -252,7 +254,6 @@ module.exports = function (socket, io, clients) {
             }
             callback()
         })
-
         socket.on('disconnect', () => {
             console.log("disconnetDone!")
             clients[socket.user._id] = clients[socket.user._id].filter(socketId => !_.isEqual(socketId, socket.id))
