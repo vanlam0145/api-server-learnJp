@@ -188,6 +188,7 @@ module.exports = function (socket, io, clients) {
                         if (!friendsExist) {
                             if (clients[createAddFriend.receiverId]) {
                                 clients[createAddFriend.receiverId].forEach(socketId => {
+                                    console.log("emit1")
                                     io.sockets.connected[socketId].emit(socketConst.emitAcceptAddFriend,
                                         {
                                             userSender: socket.user._id,
@@ -197,6 +198,7 @@ module.exports = function (socket, io, clients) {
                             }
                             if (clients[socket.user._id]) {
                                 clients[socket.user._id].forEach(socketId => {
+                                    console.log("emit")
                                     io.sockets.connected[socketId].emit(socketConst.emitAcceptAddFriend,
                                         {
                                             userSender: socket.user._id,
