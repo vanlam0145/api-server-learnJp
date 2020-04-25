@@ -149,6 +149,43 @@ exports.path = () => {
             //     }
             // },
         },
+        "/challenges/{id}/file": {
+            put: {
+                "tags": ["AdminDashboard"],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "upload File image or sound",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Challenge",
+                        "required": true,
+                    }
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "multipart/form-data": {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    file: {
+                                        type: 'string',
+                                        format: 'binary'
+                                    },
+                                    type: { type: 'string', enum: ['image', 'choice_1_voice', 'choice_2_voice'] }
+                                },
+                                required: ['file', 'type']
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 exports.definition = () => {

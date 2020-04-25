@@ -5,6 +5,7 @@ const until = require('../services/untilServices')
 const { resDataModify, serverWithPort, resErrorModify } = require('../../helper/until')
 const fs = require('fs')
 const path = require('path')
+const { ErrorService } = require("../../helper/errorService")
 
 exports.getList = async (req, res) => {
     const result = await ChallengesService.getList()
@@ -27,12 +28,16 @@ exports.addFile = async (req, res) => {
     until.validateJson(updateFile, req.body)
 
     if (req.body.type == 'image') {
+        if (req.file.originalname.split(".")[2] != "jpg")
+            throw ErrorService.somethingWentWrong("Chỉ nhận định dạng .jpg cho image")
         const allImage = fs.readdirSync(path.join(__dirname, "../../../assets/challenge/photo"))
         if (allImage.indexOf(req.file.originalname) == -1)
             fs.writeFileSync(path.join(__dirname, `../../../assets/challenge/photo/${req.file.originalname}`), req.file.buffer)
 
     }
     if (req.body.type == 'choice_1_voice' || req.body.type == "choice_2_voice") {
+        if (req.file.originalname.split(".")[2] != "mp3")
+            throw ErrorService.somethingWentWrong("Chỉ nhận định dạng .mp3 cho sound")
         const allImage = fs.readdirSync(path.join(__dirname, "../../../assets/challenge/audio"))
         if (allImage.indexOf(req.file.originalname) == -1)
             fs.writeFileSync(path.join(__dirname, `../../../assets/challenge/audio/${req.file.originalname}`), req.file.buffer)
