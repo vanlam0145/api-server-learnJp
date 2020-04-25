@@ -138,6 +138,7 @@ module.exports = function (socket, io, clients) {
         })
         socket.on(socketConst.onAcceptAddFriend, async (accecpt, callback) => {
             authMiddlewareSocket(['admin', 'user'], socket, io)
+            console.log(accecpt)
             if (socket.auth) {
                 const ivalid = validateJsonSocket({
                     type: 'object',
@@ -204,6 +205,7 @@ module.exports = function (socket, io, clients) {
                     }
                 }
             }
+            console.log(accecpt,"2")
             callback()
         })
         socket.on(socketConst.onReciverReject, async (reciverReject, callback) => {
