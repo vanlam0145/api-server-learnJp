@@ -5,12 +5,9 @@ const { socketConst } = require('./const')
 const _ = require('lodash')
 module.exports = function (socket, io, clients) {
     authMiddlewareSocket(['admin', 'user'], socket, io)
-    console.log("chay vao day")
     if (socket.auth) {
-        console.log("on")
         if (clients[socket.user._id]) clients[socket.user._id].push(socket.id)
         else clients[socket.user._id] = [socket.id]
-
         socket.on(socketConst.onAddFriend, async (createAddFriend, callback) => {
             console.log(createAddFriend)
             authMiddlewareSocket(['admin', 'user'], socket, io)
