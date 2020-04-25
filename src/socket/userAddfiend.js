@@ -149,63 +149,77 @@ module.exports = function (socket, io, clients) {
                     required: ['senderId', 'senderName']
                 }, accecpt, io)
                 if (ivalid == true) {
-                    let [friendsExist, userReciver, userSender] = await Promise.all([
-                        UserModel.findOne({
-                            _id: socket.user._id,
-                            'friends.userId': { $eq: accecpt.senderId }
-                        }),
-                        UserModel.findOneAndUpdate({
-                            _id: socket.user._id,
-                            'request.userId': { $eq: accecpt.senderId },
-                            'friends.userId': { $ne: accecpt.senderId }
-                        }, {
-                            $pull: { request: { userId: accecpt.senderId } },
-                            $inc: { totalRequest: -1 },
-                            $push: { friends: { userId: accecpt.senderId, username: accecpt.senderName } }
-                        }, { new: true }).lean(),
-                        UserModel.findOneAndUpdate({
-                            _id: accecpt.senderId,
-                            'sentRequest.userId': { $eq: socket.user._id },
-                            'friends.userId': { $ne: socket.user._id }
-                        }, {
-                            $pull: { sentRequest: { userId: socket.user._id } },
-                            $inc: { totalSenderRequest: -1 },
-                            $push: { friends: { userId: socket.user._id, username: socket.user.username } }
-                        }, { new: true }).lean()
-                    ])
-                    if (!friendsExist) {
-                        if (clients[createAddFriend.receiverId]) {
-                            clients[createAddFriend.receiverId].forEach(socketId => {
-                                io.sockets.connected[socketId].emit(socketConst.emitAcceptAddFriend,
-                                    {
-                                        userSender: socket.user._id,
-                                        userSenderName: socket.user.username
-                                    })
-                            });
+                    try {
+                        let [friendsExist, userReciver, userSender] = await Promise.all([
+                            UserModel.findOne({
+                                _id: socket.user._id,
+                                'friends.userId': { $eq: accecpt.senderId }
+                            }),
+                            UserModel.findOneAndUpdate({
+                                _id: socket.user._id,
+                                'request.userId': { $eq: accecpt.senderId },
+                                'friends.userId': { $ne: accecpt.senderId }
+                            }, {
+                                $pull: { request: { userId: accecpt.senderId } },
+                                $inc: { totalRequest: -1 },
+                                $push: { friends: { userId: accecpt.senderId, username: accecpt.senderName } }
+                            }, { new: true }).lean(),
+                            UserModel.findOneAndUpdate({
+                                _id: accecpt.senderId,
+                                'sentRequest.userId': { $eq: socket.user._id },
+                                'friends.userId': { $ne: socket.user._id }
+                            }, {
+                                $pull: { sentRequest: { userId: socket.user._id } },
+                                $inc: { totalSenderRequest: -1 },
+                                $push: { friends: { userId: socket.user._id, username: socket.user.username } }
+                            }, { new: true }).lean()
+                        ])
+                        if (!friendsExist) {
+                            if (clients[createAddFriend.receiverId]) {
+                                clients[createAddFriend.receiverId].forEach(socketId => {
+                                    io.sockets.connected[socketId].emit(socketConst.emitAcceptAddFriend,
+                                        {
+                                            userSender: socket.user._id,
+                                            userSenderName: socket.user.username
+                                        })
+                                });
+                            }
+                            if (clients[socket.user._id]) {
+                                clients[socket.user._id].forEach(socketId => {
+                                    io.sockets.connected[socketId].emit(socketConst.emitAcceptAddFriend,
+                                        {
+                                            userSender: socket.user._id,
+                                            userSenderName: socket.user.username
+                                        })
+                                });
+                            }
+                        } else {
+                            if (clients[socket.user._id]) {
+                                clients[socket.user._id].forEach(socketId => {
+                                    io.sockets.connected[socketId].emit(socketConst.emitAnyError,
+                                        {
+                                            code: 601,
+                                            message: "Lỗi!, người bạn muốn xác nhận đã nằm trong danh sách bạn bè!"
+                                        })
+                                });
+                            }
                         }
-                        if (clients[socket.user._id]) {
-                            clients[socket.user._id].forEach(socketId => {
-                                io.sockets.connected[socketId].emit(socketConst.emitAcceptAddFriend,
-                                    {
-                                        userSender: socket.user._id,
-                                        userSenderName: socket.user.username
-                                    })
-                            });
-                        }
-                    } else {
+                    } catch (error) {
+                        console.log(error)
                         if (clients[socket.user._id]) {
                             clients[socket.user._id].forEach(socketId => {
                                 io.sockets.connected[socketId].emit(socketConst.emitAnyError,
                                     {
                                         code: 601,
-                                        message: "Lỗi!, người bạn muốn xác nhận đã nằm trong danh sách bạn bè!"
+                                        message: "error!"
                                     })
                             });
                         }
                     }
+
                 }
             }
-            console.log(accecpt,"2")
+            console.log(accecpt, "2")
             callback()
         })
         socket.on(socketConst.onReciverReject, async (reciverReject, callback) => {
