@@ -9,7 +9,6 @@ module.exports = function (socket, io, clients) {
         if (clients[socket.user._id]) clients[socket.user._id].push(socket.id)
         else clients[socket.user._id] = [socket.id]
         socket.on(socketConst.onAddFriend, async (createAddFriend, callback) => {
-            console.log(createAddFriend)
             authMiddlewareSocket(['admin', 'user'], socket, io)
             if (socket.auth) {
                 const ivalid = validateJsonSocket({
@@ -21,60 +20,73 @@ module.exports = function (socket, io, clients) {
                     required: ['receiverId', 'receiverName']
                 }, createAddFriend, io)
                 if (ivalid == true) {
-                    let [friendsExist, userReciver, userSender] = await Promise.all([
-                        UserModel.findOne({
-                            _id: createAddFriend.receiverId,
-                            'friends.userId': { $eq: socket.user._id }
-                        }),
-                        UserModel.findOneAndUpdate({
-                            _id: createAddFriend.receiverId,
-                            'request.userId': { $ne: socket.user._id },
-                            'friends.userId': { $ne: socket.user._id },
-                        }, {
-                            $push: {
-                                request: {
-                                    userId: socket.user._id,
-                                    username: socket.user.username ? socket.user.username : socket.user.email
+                    try {
+                        let [friendsExist, userReciver, userSender] = await Promise.all([
+                            UserModel.findOne({
+                                _id: createAddFriend.receiverId,
+                                'friends.userId': { $eq: socket.user._id }
+                            }),
+                            UserModel.findOneAndUpdate({
+                                _id: createAddFriend.receiverId,
+                                'request.userId': { $ne: socket.user._id },
+                                'friends.userId': { $ne: socket.user._id },
+                            }, {
+                                $push: {
+                                    request: {
+                                        userId: socket.user._id,
+                                        username: socket.user.username ? socket.user.username : socket.user.email
+                                    }
+                                },
+                                $inc: {
+                                    totalRequest: 1
                                 }
-                            },
-                            $inc: {
-                                totalRequest: 1
+                            }, { new: true }).lean(),
+                            UserModel.findOneAndUpdate({
+                                _id: socket.user._id,
+                                'sentRequest.userId': { $ne: createAddFriend.receiverId },
+                                'friends.userId': { $ne: createAddFriend.receiverId }
+                            }, {
+                                $push: {
+                                    sentRequest: {
+                                        userId: createAddFriend.receiverId,
+                                        username: createAddFriend.receiverName
+                                    }
+                                },
+                                $inc: { totalSenderRequest: 1 }
+                            }, { new: true }).lean()
+                        ])
+                        if (!friendsExist) {
+                            if (clients[createAddFriend.receiverId]) {
+                                clients[createAddFriend.receiverId].forEach(socketId => {
+                                    io.sockets.connected[socketId].emit(socketConst.emitAddFriend,
+                                        {
+                                            userSender: socket.user._id,
+                                            userSenderName: socket.user.username
+                                        })
+                                });
                             }
-                        }, { new: true }).lean(),
-                        UserModel.findOneAndUpdate({
-                            _id: socket.user._id,
-                            'sentRequest.userId': { $ne: createAddFriend.receiverId },
-                            'friends.userId': { $ne: createAddFriend.receiverId }
-                        }, {
-                            $push: {
-                                sentRequest: {
-                                    userId: createAddFriend.receiverId,
-                                    username: createAddFriend.receiverName
-                                }
-                            },
-                            $inc: { totalSenderRequest: 1 }
-                        }, { new: true }).lean()
-                    ])
-                    if (!friendsExist) {
-                        if (clients[createAddFriend.receiverId]) {
-                            clients[createAddFriend.receiverId].forEach(socketId => {
-                                io.sockets.connected[socketId].emit(socketConst.emitAddFriend,
-                                    {
-                                        userSender: socket.user._id,
-                                        userSenderName: socket.user.username
-                                    })
-                            });
+                            if (clients[socket.user._id]) {
+                                clients[socket.user._id].forEach(socketId => {
+                                    io.sockets.connected[socketId].emit(socketConst.emitAddFriend,
+                                        {
+                                            userSender: socket.user._id,
+                                            userSenderName: socket.user.username
+                                        })
+                                });
+                            }
+                        } else {
+                            if (clients[socket.user._id]) {
+                                clients[socket.user._id].forEach(socketId => {
+                                    io.sockets.connected[socketId].emit(socketConst.emitAnyError,
+                                        {
+                                            code: 600,
+                                            message: "Lỗi!, người nhận yêu cầu đã nằm trong danh sách bạn bè!"
+                                        })
+                                });
+                            }
                         }
-                        if (clients[socket.user._id]) {
-                            clients[socket.user._id].forEach(socketId => {
-                                io.sockets.connected[socketId].emit(socketConst.emitAddFriend,
-                                    {
-                                        userSender: socket.user._id,
-                                        userSenderName: socket.user.username
-                                    })
-                            });
-                        }
-                    } else {
+                    } catch (error) {
+                        console.log(error, "onAddFriend")
                         if (clients[socket.user._id]) {
                             clients[socket.user._id].forEach(socketId => {
                                 io.sockets.connected[socketId].emit(socketConst.emitAnyError,
@@ -138,7 +150,6 @@ module.exports = function (socket, io, clients) {
         })
         socket.on(socketConst.onAcceptAddFriend, async (accecpt, callback) => {
             authMiddlewareSocket(['admin', 'user'], socket, io)
-            console.log(accecpt)
             if (socket.auth) {
                 const ivalid = validateJsonSocket({
                     type: 'object',
@@ -219,7 +230,6 @@ module.exports = function (socket, io, clients) {
 
                 }
             }
-            console.log(accecpt, "2")
             callback()
         })
         socket.on(socketConst.onReciverReject, async (reciverReject, callback) => {
