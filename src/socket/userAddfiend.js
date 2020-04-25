@@ -8,6 +8,7 @@ module.exports = function (socket, io, clients) {
     if (socket.auth) {
         if (clients[socket.user._id]) clients[socket.user._id].push(socket.id)
         else clients[socket.user._id] = [socket.id]
+        console.log(clients)
         socket.on(socketConst.onAddFriend, async (createAddFriend, callback) => {
             authMiddlewareSocket(['admin', 'user'], socket, io)
             if (socket.auth) {
@@ -186,8 +187,9 @@ module.exports = function (socket, io, clients) {
                             }, { new: true }).lean()
                         ])
                         if (!friendsExist) {
-                            if (clients[createAddFriend.receiverId]) {
-                                clients[createAddFriend.receiverId].forEach(socketId => {
+                            if (clients[accecpt.senderId]) {
+                                console.log(clients)
+                                clients[accecpt.senderId].forEach(socketId => {
                                     console.log("emit1")
                                     io.sockets.connected[socketId].emit(socketConst.emitAcceptAddFriend,
                                         {

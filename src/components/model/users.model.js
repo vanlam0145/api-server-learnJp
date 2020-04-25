@@ -88,7 +88,7 @@ const usersSchema = new Schema({
 	sentRequest: [{
 		userId: {
 			type: Schema.Types.ObjectId,
-			ref: 'User'
+			ref: 'Users'
 		},
 		username: { type: String }
 	}],
