@@ -49,7 +49,7 @@ exports.resDataModify = (res, data, code = 200) => {
 exports.serverWithPort = (port) => {
     if (port == 1903)
         return `http://localhost:1903`
-    return `https://jp-server-kltn.herokuapp.com`
+    return `https://learn-jp-kltn.herokuapp.com`
 }
 exports.getDataDefault = (v, d) => v || d
 exports.addZero = (name) => {
