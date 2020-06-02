@@ -5,7 +5,7 @@ const { socketConst } = require('./const');
 const { UserModel } = require('../components/model/users.model');
 const Types = require('mongoose').Types;
 
-module.exports = function (server, io, clients) {
+module.exports = function (socket, io, clients) {
   if (socket.auth) {
     socket.on(socketConst.onCreateMessage, async (newMessage, callback) => {
       const ivalid = validateJsonSocket(

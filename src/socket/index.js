@@ -1,4 +1,5 @@
 const socketIO = require('socket.io');
+const _ = require('lodash');
 const { authMiddlewareSocket } = require('../helper/until');
 module.exports = function (server) {
   const io = socketIO(server);
