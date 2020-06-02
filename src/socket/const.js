@@ -1,21 +1,24 @@
 exports.socketConst = {
-    emitAnyError: "emitAnyError",
+  emitAnyError: 'emitAnyError',
 
-    createComment: "createComment",
-    newComment: "newComment",
+  createComment: 'createComment',
+  newComment: 'newComment',
 
-    updateComment: "updateComment",
-    newCommentUpdate: "newCommentUpdate",
+  updateComment: 'updateComment',
+  newCommentUpdate: 'newCommentUpdate',
 
-    onAddFriend: "onAddFriend",
-    emitAddFriend: "emitAddFriend",
-    //sender Reject
-    onRejectAddFriend: "onRejectAddFriend",
-    emitRejectAddFriend: "emitRejectAddFriend",
-    //accept
-    onAcceptAddFriend: "onAcceptAddFriend",
-    emitAcceptAddFriend: "emitAcceptAddFriend",
-    //reciver Reject
-    onReciverReject: "onReciverReject",
-    emitReciverReject: "emitReciverReject",
-}
+  onAddFriend: 'onAddFriend',
+  emitAddFriend: 'emitAddFriend',
+  //sender Reject
+  onRejectAddFriend: 'onRejectAddFriend',
+  emitRejectAddFriend: 'emitRejectAddFriend',
+  //accept
+  onAcceptAddFriend: 'onAcceptAddFriend',
+  emitAcceptAddFriend: 'emitAcceptAddFriend',
+  //reciver Reject
+  onReciverReject: 'onReciverReject',
+  emitReciverReject: 'emitReciverReject',
+  //onCreateMessage
+  onCreateMessage: 'onCreateMessage',
+  emitCreateMessage: 'emitCreateMessage',
+};

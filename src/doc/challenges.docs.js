@@ -183,6 +183,14 @@ exports.path = () => {
                             }
                         }
                     }
+                },
+                responses: {
+                    "400": {
+                        description: "Invalid user supplied"
+                    },
+                    "404": {
+                        description: "User not found"
+                    }
                 }
             }
         }

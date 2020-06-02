@@ -1,70 +1,51 @@
-const { authMiddlewareSocket } = require('../helper/until')
-const { validateJsonSocket } = require('../components/services/untilServices')
-const CommentModel = require('../components/model/comments.model')
-const socketIO = require('socket.io');
+const { authMiddlewareSocket } = require('../helper/until');
+const { validateJsonSocket } = require('../components/services/untilServices');
+const { MessageChatModel } = require('../components/model/messageChat.model');
+const { socketConst } = require('./const');
+const { UserModel } = require('../components/model/users.model');
+const Types = require('mongoose').Types;
 
-module.exports = function (server) {
-    const io = socketIO(server);
-    io.on('connection', (socket) => {
-        authMiddlewareSocket(['admin', 'user'], socket, io)
-        socket.on('join', (params, callback) => {
-            authMiddlewareSocket(['admin', 'user'], socket, io)
-            socket.join(params.room);
-            callback();
-        })
-        socket.on('createComment', (newComment, callback) => {
-            authMiddlewareSocket(['admin', 'user'], socket, io)
-            if (socket.auth) {
-                const ivalid = validateJsonSocket({
-                    type: 'object',
-                    properties: {
-                        room: { type: 'string' },
-                        comment: { type: 'string' }
-                    },
-                    required: ['room', 'comment']
-                }, newComment, io)
-                if (ivalid == true) {
-                    const commentSave = await CommentModel.create({
-                        idChallenge: newComment.room,
-                        content: newComment.comment,
-                        idUser: socket.user._id
-                    })
-                    io.to(comment.room).emit('newComment', {
-                        ...comment,
-                        userName: socket.user.username ? socket.user.username : socket.user.email,
-                        ...commentSave
-                    })
-                }
-            }
-            callback()
-        })
-        socket.on('updateComment', (updateComment, callback) => {
-            authMiddlewareSocket(['admin', 'user'], socket, io)
-            if (socket.auth) {
-                const ivalid = validateJsonSocket({
-                    type: 'object',
-                    properties: {
-                        _id: { type: 'string' },
-                        room: { type: 'string' },
-                        commentUp: { type: 'string' }
-                    },
-                    required: ['_id', 'room', 'commentUp']
-                }, updateComment, io)
-                if (ivalid == true) {
-                    const updateComment = await CommentModel.findByIdAndUpdate(updateComment._id, {
-                        content: updateComment.commentUp,
-                    }).lean()
-                    io.to(comment.room).emit('newComment', {
-                        ...comment,
-                        userName: socket.user.username ? socket.user.username : socket.user.email,
-                        ...updateComment
-                    })
-                }
-            }
-            callback()
-        })
-        socket.on('disconnect', () => {
-            console.log("disconnetDone!s")
-        })
-    })
-}
+module.exports = function (server, io, clients) {
+  if (socket.auth) {
+    socket.on(socketConst.onCreateMessage, async (newMessage, callback) => {
+      const ivalid = validateJsonSocket(
+        {
+          type: 'object',
+          properties: {
+            message: { type: 'string' },
+            receiver: { type: 'string' },
+          },
+          required: ['message', 'receiver'],
+        },
+        newMessage,
+        io
+      );
+      if (ivalid == true) {
+        try {
+          if (!Types.ObjectId.isValid(newMessage.receiver)) throw Error('Khong dung dinh dang!');
+          const userReveiver = await UserModel.findById(newMessage.receiver);
+          if (!userReveiver) throw Error('Khong tim thay nguoi nhan');
+          const message = await MessageChatModel.create({
+            message,
+            sender: socket.user._id,
+            receiver: newMessage.userReveiver,
+          });
+          const userNotSeen = await MessageChatModel.aggregate([
+            { $match: { seen: false, receiver: newMessage.userReveiver } },
+            { $group: { _id: '$sender' } },
+          ]);
+          io.to(newMessage.userReveiver).emit(socketConst.emitCreateMessage, {
+            ...message,
+            count: userNotSeen.length,
+          });
+        } catch (error) {
+          io.to(socket.id).emit(socketConst.emitAnyError, {
+            code: 601,
+            message: JSON.stringify(error),
+          });
+        }
+      }
+      callback();
+    });
+  }
+};
