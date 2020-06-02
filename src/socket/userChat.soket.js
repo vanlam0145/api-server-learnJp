@@ -26,12 +26,12 @@ module.exports = function (socket, io, clients) {
           const userReveiver = await UserModel.findById(newMessage.receiver);
           if (!userReveiver) throw Error('Khong tim thay nguoi nhan');
           const message = await MessageChatModel.create({
-            message,
+            message: newMessage.message,
             sender: socket.user._id,
-            receiver: newMessage.userReveiver,
+            receiver: newMessage.receiver,
           });
           const userNotSeen = await MessageChatModel.aggregate([
-            { $match: { seen: false, receiver: newMessage.userReveiver } },
+            { $match: { seen: false, receiver: Types.ObjectId(newMessage.receiver) } },
             { $group: { _id: '$sender' } },
           ]);
           io.to(newMessage.userReveiver).emit(socketConst.emitCreateMessage, {
@@ -39,9 +39,10 @@ module.exports = function (socket, io, clients) {
             count: userNotSeen.length,
           });
         } catch (error) {
+          console.log('socketConst.emitAnyError', error);
           io.to(socket.id).emit(socketConst.emitAnyError, {
             code: 601,
-            message: JSON.stringify(error),
+            message: error,
           });
         }
       }
