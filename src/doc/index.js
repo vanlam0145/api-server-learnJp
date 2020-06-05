@@ -36,14 +36,6 @@ const regisDocs = function () {
     let tags = [];
     let paths = {};
     let definitions = {};
-    definitions.responses = {
-        "UnauthorizedError": {
-            "description": "Access token is missing or invalid"
-        },
-        "UnprocessableEntity": {
-            "description": "${field} is required"
-        }
-    }
     for (let r of modules) {
         const routerName = r.split('.')[0];
         const RouterName = (_.compact(routerName).splice(0, 1)).join("").toUpperCase() + (_.compact(routerName).splice(1, (_.compact(routerName)).length)).join("")
