@@ -21,4 +21,7 @@ exports.socketConst = {
   //onCreateMessage
   onCreateMessage: 'onCreateMessage',
   emitCreateMessage: 'emitCreateMessage',
+  //onAddRectionMess
+  onAddRectionMess: 'onAddRectionMess',
+  emitAddRectionMess: 'emitAddRectionMess',
 };
