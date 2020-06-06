@@ -1,12 +1,18 @@
 module.exports = class Schema {
-    constructor() {
-        this.createSchema = {
-            type: 'object',
-            properties: {
-                //name: {type: 'string'},
-            },
-            //required: ['name']
-        }
-    }
-
-}
+  constructor() {}
+  static createSchema = {
+    type: 'object',
+    properties: {
+      text: { type: 'string' },
+      mean: { type: 'string' },
+    },
+  };
+  static triggerAnswerSchema = {
+    type: 'object',
+    properties: {
+      type: { type: 'string', enum: ['listen', 'write', 'learn'] },
+      answer: { type: 'boolean' },
+    },
+    required: ['type', 'answer'],
+  };
+};
