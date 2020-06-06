@@ -14,6 +14,7 @@ const answerHistorySchema = new Schema(
     courserId: { type: Schema.Types.ObjectId, ref: 'Course' },
     topicId: { type: Schema.Types.ObjectId, ref: 'Topic' },
     typeLearn: { type: String, enum: Object.keys(typeLearnEnum), required: true },
+    
     total: { type: Number, required: true },
     sumLearn: { type: Number, required: true },
     ngTao: { type: String },

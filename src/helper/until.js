@@ -40,9 +40,9 @@ exports.authMiddlewareSocket = (roles, socket, io, room) => {
   }
 };
 exports.queryMiddleware = () => (req, res, next) => {
-  const { filter, page, limit } = req.params;
+  const { filter, page, limit } = req.query;
   req.queryInfor = _.merge({
-    filter,
+    filter: { ...JSON.parse(filter || null), userId: req.user._id },
     page,
     limit,
   });
