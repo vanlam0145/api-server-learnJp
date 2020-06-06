@@ -66,7 +66,10 @@ exports.login = async ({ username, password, email }) => {
     );
     const { hash, ...userWithoutHash } = u_user.toJSON();
     return userWithoutHash;
-  } else throw ErrorService.loginFaild();
+  } else {
+    if (user) throw ErrorService.loginFaild('Sai mật khẩu');
+    else throw ErrorService.loginFaild('Người dùng không tồn tại');
+  }
 };
 exports.getMe = async (id) => {
   return await UserModel.findById(id); //.populate({path:'friends.userId'}).select('-hash').lean()
