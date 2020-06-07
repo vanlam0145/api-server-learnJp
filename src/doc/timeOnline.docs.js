@@ -18,8 +18,12 @@ exports.path = () => {
           {
             in: 'query',
             name: 'filter',
-            schema: {
-              $ref: '#/definitions/TimeOnlineResponse',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/definitions/TimeOnlineResponse',
+                },
+              },
             },
           },
         ],
@@ -176,18 +180,18 @@ exports.definition = () => {
       type: 'object',
       properties: {
         minute: { type: 'number' },
-        date: { type: 'string',format:'date-time' },
+        date: { type: 'string', format: 'date-time' },
       },
-      required:['minute','date']
+      required: ['minute', 'date'],
     },
     TimeOnlineResponse: {
-        type: 'object',
-        properties: {
-          userId: { type: 'string' },
-          minute: { type: 'number' },
-          date: { type: 'string' },
-          month: { type: 'string' },
-        },
+      type: 'object',
+      properties: {
+        userId: { type: 'string' },
+        minute: { type: 'number' },
+        date: { type: 'string' },
+        month: { type: 'string' },
       },
+    },
   };
 };
