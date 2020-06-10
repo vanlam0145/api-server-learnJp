@@ -17,10 +17,11 @@ exports._makeQuestion = (params = {}, contents) => {
         arrQuestions.splice(answer_id, 1);
         return {
             question: question.text,
+            _id: question._id,
             //answers: answers.map(item => !params.type ? item.mean : { _id: item._id, answer: avatarCtrl.getImgUrl(item.avatar) }),
             answers: answers.map(
                 item =>
-                    (params.type && params.userForWeb && {_id: item._id, answer: item.meaning})
+                    (params.type && params.userForWeb && { _id: item._id, answer: item.meaning })
                     ||
                     (!params.type && item.mean)
                 //||
