@@ -36,7 +36,7 @@ module.exports = function (socket, io, clients) {
           ]);
           if (clients[newMessage.userReveiver]) {
             clients[newMessage.userReveiver].forEach((socketId) => {
-              io.sockets.connected[socketId].emit(socketConst.emitRejectAddFriend, {
+              io.sockets.connected[socketId].emit(socketConst.emitCreateMessage, {
                 ...message,
                 count: userNotSeen.length,
               });
