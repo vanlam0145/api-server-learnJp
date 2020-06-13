@@ -8,7 +8,6 @@ module.exports = function (socket, io, clients) {
   if (socket.auth) {
     if (clients[socket.user._id]) clients[socket.user._id].push(socket.id);
     else clients[socket.user._id] = [socket.id];
-    console.log(clients);
     socket.on(socketConst.onAddFriend, async (createAddFriend, callback) => {
       authMiddlewareSocket(['admin', 'user'], socket, io);
       if (socket.auth) {
@@ -26,7 +25,6 @@ module.exports = function (socket, io, clients) {
         );
         if (ivalid == true) {
           try {
-            console.log(createAddFriend);
             let [friendsExist, userReciver, userSender] = await Promise.all([
               UserModel.findOne({
                 _id: createAddFriend.receiverId,
@@ -69,7 +67,6 @@ module.exports = function (socket, io, clients) {
                 { new: true }
               ).lean(),
             ]);
-            console.log(userSender, userReciver);
             if (!friendsExist) {
               if (clients[createAddFriend.receiverId]) {
                 clients[createAddFriend.receiverId].forEach((socketId) => {
@@ -220,9 +217,7 @@ module.exports = function (socket, io, clients) {
             ]);
             if (!friendsExist) {
               if (clients[accecpt.senderId]) {
-                console.log(clients);
                 clients[accecpt.senderId].forEach((socketId) => {
-                  console.log('emit1');
                   io.sockets.connected[socketId].emit(socketConst.emitAcceptAddFriend, {
                     userSender: socket.user._id,
                     userSenderName: socket.user.username,
@@ -231,7 +226,6 @@ module.exports = function (socket, io, clients) {
               }
               if (clients[socket.user._id]) {
                 clients[socket.user._id].forEach((socketId) => {
-                  console.log('emit');
                   io.sockets.connected[socketId].emit(socketConst.emitAcceptAddFriend, {
                     userSender: socket.user._id,
                     userSenderName: socket.user.username,

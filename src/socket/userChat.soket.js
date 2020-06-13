@@ -34,8 +34,8 @@ module.exports = function (socket, io, clients) {
             { $match: { seen: false, receiver: Types.ObjectId(newMessage.receiver) } },
             { $group: { _id: '$sender' } },
           ]);
-          if (clients[newMessage.userReveiver]) {
-            clients[newMessage.userReveiver].forEach((socketId) => {
+          if (clients[message.receiver]) {
+            clients[message.receiver].forEach((socketId, index) => {
               io.sockets.connected[socketId].emit(socketConst.emitCreateMessage, {
                 ...message,
                 count: userNotSeen.length,
@@ -87,14 +87,14 @@ module.exports = function (socket, io, clients) {
 
           if (clients[emitTo]) {
             clients[emitTo].forEach((socketId) => {
-              io.sockets.connected[socketId].emit(socketConst.emitRejectAddFriend, {
+              io.sockets.connected[socketId].emit(socketConst.emitAddRectionMess, {
                 ...findMessage,
                 reaction: message.typeReact,
               });
             });
           }
         } catch (error) {
-          console.log('socketConst.emitRejectAddFriend', error);
+          console.log('socketConst.emitAddRectionMess', error);
           io.to(socket.id).emit(socketConst.emitAnyError, {
             code: 601,
             message: error,
