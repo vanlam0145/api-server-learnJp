@@ -33,7 +33,7 @@ exports.ofFriend = async (req, res) => {
       },
       required: ['friend'],
     },
-    req.body
+    req.query
   );
   const result = await MessageChatService.ofFriend(req);
   resDataModify(res, result);

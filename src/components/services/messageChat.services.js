@@ -19,8 +19,8 @@ exports.ofFriend = async (req) => {
   return await untilServices.exec(
     MessageChatModel.find({
       $or: [
-        { sender: req.user._id, receiver: req.body.friend },
-        { sender: req.body.friend, receiver: req.user._id },
+        { sender: req.user._id, receiver: req.query.friend },
+        { sender: req.query.friend, receiver: req.user._id },
       ],
     })
   );

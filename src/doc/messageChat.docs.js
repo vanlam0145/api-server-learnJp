@@ -169,22 +169,19 @@ exports.path = () => {
           },
         ],
         summary: 'Lấy toàn bộ tin nhắn giữa hai người',
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  friend: {
-                    type: "string",
-                  },
-                },
-                required: ['friend'],
-              },
-            },
+        parameters: [{
+          in: 'query',
+          name: 'friend',
+          schema: {
+            type: 'string'
           },
-        },
+          required: true
+        }],
+        responses:{
+          '200':{
+            
+          }
+        }
       },
     },
   };
