@@ -3,7 +3,6 @@ const { validateJsonSocket } = require('../components/services/untilServices');
 const CommentModel = require('../components/model/comments.model');
 
 module.exports = function (socket, io) {
-  //authMiddlewareSocket(['admin', 'user'], socket, io)
   socket.on('join', (params, callback) => {
     authMiddlewareSocket(['admin', 'user'], socket, io, params.room);
     console.log(params, 'join');
