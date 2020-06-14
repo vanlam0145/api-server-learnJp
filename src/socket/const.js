@@ -24,4 +24,6 @@ exports.socketConst = {
   //onAddRectionMess
   onAddRectionMess: 'onAddRectionMess',
   emitAddRectionMess: 'emitAddRectionMess',
+  //check friend online
+  emitFriendOnline:'emitFriendOnline'
 };
