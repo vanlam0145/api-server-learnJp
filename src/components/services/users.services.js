@@ -81,14 +81,15 @@ exports.getCourseLatest = async (id) => {
       populate: { path: 'contents' },
       options: { sort: '-create_at' },
     })
-    .select('-hash');
-  const { avatar, username, _id, courses, create_at, ...userExceptField } = user.toJSON();
+    .select('-hash').lean();
+  user.courses.forEach((course, index) => {
+    let sumContent = course.contents.length
+    let sumContentMaster = _.filter(course.contents, { masterContent: true }).length
+    if (sumContentMaster > 0)
+      user.courses[index].master = sumContentMaster * 100 / sumContent
+  });
   return {
-    avatar,
-    username,
-    _id,
-    courses,
-    create_at,
+    courses: user.courses,
   };
 };
 exports.setAvartar = async (idimage, userID) => {

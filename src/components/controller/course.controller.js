@@ -21,7 +21,7 @@ exports.learn = async (req, res) => {
     resDataModify(res, result)
 }
 exports.delete = async (req, res) => {
-    const result = await CourseService.delete(req.params.id)
+    const result = await CourseService.delete(req)
     resDataModify(res, result)
 }
 exports.updateContentOnCourse = async (req, res) => {

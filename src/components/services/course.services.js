@@ -23,12 +23,13 @@ exports.makeQuestion = async (id) => {
 exports.learn = (id) => {
   this.makeQuestion(id);
 };
-exports.delete = async function (id) {
-  const courses = await untilServices.exec(CourseModel.findByIdAndDelete({ _id: id }));
-  for (let content of courses.contents) {
-    await untilServices.exec(ContentModel.deleteOne({ _id: content }));
-  }
-  return await ContentModel.deleteOne({ _id: id });
+exports.delete = async function (req) {
+  const courses = await untilServices.exec(CourseModel.findByIdAndDelete({ _id: req.params.id }));
+  await Promise.all([
+    untilServices.exec(ContentModel.deleteMany({ _id: { $in: courses.contents } })),
+    UserModel.updateOne({ _id: req.user._id }, { $pull: { courses: req.params.id } })
+  ])
+  return await ContentModel.deleteOne({ _id: req.params.id });
 };
 exports.updateContentOnCourse = async (body) => {
   const { course_id, contents, isAdd } = body;
