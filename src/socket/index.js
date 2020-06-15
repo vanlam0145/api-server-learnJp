@@ -21,6 +21,7 @@ module.exports = function (server) {
         clients[socket.user._id] = clients[socket.user._id].filter(
           (socketId) => !_.isEqual(socketId, socket.id)
         );
+        require('./userFriendOnline.socket')(io, clients)
         if (!clients[socket.user._id].length) delete clients[socket.user._id].length;
       });
     }
