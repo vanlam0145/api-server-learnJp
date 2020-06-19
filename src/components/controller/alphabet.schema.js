@@ -10,15 +10,7 @@ module.exports = class Schema {
     static updateSchema = {
         type: 'object',
         properties: {
-            description: {
-                type: 'array',
-                items: {
-                    type: 'object',
-                    properties: {
-                    }
-                }
-            }
-        },
-        required: ['description']
+            
+        }
     }
 }
