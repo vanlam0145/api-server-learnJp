@@ -64,6 +64,8 @@ exports.login = async ({ username, password, email }) => {
       },
       { new: true }
     );
+    if (user.status == 'deactive')
+      throw ErrorService.loginFaild("Tài khoản này đã bị block! Liên hệ admin Hoàng để giải quyết!")
     const { hash, ...userWithoutHash } = u_user.toJSON();
     return userWithoutHash;
   } else {
@@ -110,3 +112,10 @@ exports.changePass = async (id, role, newPass, oldPass) => {
       throw ErrorService.somethingWentWrong('Mật khẩu cũ không đúng');
   return await user.update({ hash: bcrypt.hashSync(newPass, 10) });
 };
+exports.block = async (id) => {
+  const user = UserModel.findById(id)
+  let status = 'deactive'
+  if (user.status == status)
+    status = 'active'
+  return await UserModel.findByIdAndUpdate(id, { status }, { new: true })
+}

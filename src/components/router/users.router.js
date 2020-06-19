@@ -56,6 +56,7 @@ const usersRouter = function () {
     authMiddleware(['user', 'admin']),
     BaseRoute.routeModify(usersCRL.changePass)
   );
+  route.put('/:id/block', authMiddleware(['admin']), BaseRoute.routeModify(usersCRL.block))
   return route;
 };
 module.exports = usersRouter;

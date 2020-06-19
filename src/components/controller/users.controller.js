@@ -150,6 +150,10 @@ exports.changePass = async (req, res) => {
   );
   resDataModify(res, result);
 };
+exports.block = async (req, res) => {
+  const result = await UsersService.block(req.params.id)
+  resDataModify(res, result)
+}
 
 const _createToken = (user) => {
   const payload = {
