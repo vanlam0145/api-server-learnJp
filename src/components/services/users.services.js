@@ -115,7 +115,9 @@ exports.changePass = async (id, role, newPass, oldPass) => {
 exports.block = async (id) => {
   const user = UserModel.findById(id)
   let status = 'deactive'
-  if (user.status == status)
+  if (user.status == 'deactive')
+    status = 'active'
+  if (user.role == 'admin')
     status = 'active'
   return await UserModel.findByIdAndUpdate(id, { status }, { new: true })
 }
