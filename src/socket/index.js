@@ -1,8 +1,6 @@
-const socketIO = require('socket.io');
 const _ = require('lodash');
 const { authMiddlewareSocket } = require('../helper/until');
-module.exports = function (server) {
-  const io = socketIO(server);
+module.exports = function (io) {
   let clients = {};
   io.on('connection', (socket) => {
     authMiddlewareSocket(['admin', 'user'], socket, io);
@@ -16,8 +14,8 @@ module.exports = function (server) {
       require('./userAddfiend')(socket, io, clients);
       require('./userChat.soket')(socket, io, clients);
 
-      socket.on('disconnect', () => {
-        console.log('disconnetDone!');
+      socket.on('disconnect', (data) => {
+        console.log('disconnetDone!', data);
         clients[socket.user._id] = clients[socket.user._id].filter(
           (socketId) => !_.isEqual(socketId, socket.id)
         );
