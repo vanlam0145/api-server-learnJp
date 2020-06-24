@@ -19,12 +19,6 @@ exports.path = () => {
                     "200": {
                         "description": "OK"
                     },
-                    // "422": {
-                    //   "$ref": "#/definitions/responses/UnprocessableEntity"
-                    // },
-                    // "401": {
-                    //   "$ref": "#/definitions/responses/UnauthorizedError"
-                    // }
                 }
             }
         },
