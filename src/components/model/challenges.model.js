@@ -18,4 +18,4 @@ const challengesSchema = new Schema({
 	ngCapNhat: {type: String},
 	status: {type: String, enum: ["active", "deactive"], default: "active"}
 }, {timestamps: true})
-module.exports = mongoose.model('Challenges', challengesSchema)
+module.exports = {ChallengeModel: mongoose.model('Challenges', challengesSchema)}
