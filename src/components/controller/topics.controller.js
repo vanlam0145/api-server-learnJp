@@ -1,5 +1,5 @@
 const TopicsService = require('../services/topics.services')
-const { createSchema } = require('./topics.schema')
+const { createSchema, creataAdminSchema } = require('./topics.schema')
 const until = require('../services/untilServices')
 const { resErrorModify, resDataModify } = require('../../helper/until')
 const { ErrorService } = require('../../helper/errorService')
@@ -28,4 +28,8 @@ exports.delete = async (req, res) => {
     const result = await TopicsService.delete(req.params.id)
     io.emit(typeNotify.deleteTopic, { ...result })
     resDataModify(res, result)
+}
+exports.createAdmin = async (req, res) => {
+    until.validateJson(creataAdminSchema, req.body)
+    const result = await TopicsService
 }

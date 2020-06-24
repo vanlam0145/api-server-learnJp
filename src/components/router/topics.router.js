@@ -9,6 +9,7 @@ const topicsRouter = function () {
     route.post('/', authMiddleware(['admin']), BaseRoute.routeModify(topicsCRL.create))
     route.put('/:id', authMiddleware(['admin']), BaseRoute.routeModify(topicsCRL.update))
     route.delete('/:id', authMiddleware(['admin']), BaseRoute.routeModify(topicsCRL.delete))
+    route.post('/createAdmin',authMiddleware(['admin']),BaseRoute.routeModify(topicsCRL.createAdmin))
     return route
 }
 module.exports = topicsRouter

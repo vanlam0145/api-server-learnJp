@@ -14,4 +14,4 @@ const vocabulariesSchema = new Schema({
 	ngCapNhat: { type: String },
 	status: { type: String, enum: ["active", "deactive"], default: "active" }
 }, { timestamps: true })
-module.exports = mongoose.model('Vocabularies', vocabulariesSchema)
+module.exports = { VocabularieModel: mongoose.model('Vocabularies', vocabulariesSchema) }

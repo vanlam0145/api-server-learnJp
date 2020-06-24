@@ -11,4 +11,4 @@ const topicsSchema = new Schema({
 	ngCapNhat: { type: String },
 	status: { type: String, enum: ["active", "deactive"], default: "active" }
 }, { timestamps: true })
-module.exports = mongoose.model('Topics', topicsSchema)
+module.exports = { TopicModel: mongoose.model('Topics', topicsSchema) }
