@@ -1,16 +1,16 @@
 module.exports = class Schema {
-    constructor() { }
-    static createSchema = {
-        type: 'object',
-        properties: {
-            //name: {type: 'string'},
-        },
-        //required: ['name']
-    }
-    static updateSchema = {
-        type: 'object',
-        properties: {
-            
-        }
-    }
-}
+  constructor() {}
+  static createSchema = {
+    type: 'object',
+    properties: {
+      romaji: { type: 'string' },
+      hira: { type: 'string' },
+      kata: { type: 'string' },
+      example: { type: 'string' },
+    },
+  };
+  static updateSchema = {
+    type: 'object',
+    properties: {},
+  };
+};

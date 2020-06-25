@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const typeEnum = {
   challenge: 'challenge',
   topic: 'topic',
+  alphabet: 'alphabet',
 };
 const countIndexSchema = new Schema(
   {
