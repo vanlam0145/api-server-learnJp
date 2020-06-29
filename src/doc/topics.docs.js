@@ -58,6 +58,36 @@ exports.path = () => {
         },
       },
     },
+    '/topics/{id}/learn': {
+      get: {
+        tags: ['Topics'],
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
+        summary: 'get data to learn',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            description: 'id of topics',
+            required: true,
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'OK',
+          },
+          '422': {
+            $ref: '#/definitions/responses/UnprocessableEntity',
+          },
+          '401': {
+            $ref: '#/definitions/responses/UnauthorizedError',
+          },
+        },
+      },
+    },
     '/topics/{id}': {
       get: {
         tags: ['Topics'],

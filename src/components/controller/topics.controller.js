@@ -34,3 +34,7 @@ exports.createAdmin = async (req, res) => {
   const result = await TopicsService.createAdmin(req.body.title, req.body.voca);
   resDataModify(res, result);
 };
+exports.learn = async (req, res) => {
+  const result = await TopicsService.learn(req.params.id);
+  resDataModify(res, result);
+};
