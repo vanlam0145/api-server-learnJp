@@ -208,7 +208,7 @@ exports.resetPassword = async (req, res) => {
   var mainOptions = {
     // thiết lập đối tượng, nội dung gửi mail
     //from: 'NQH-Test nodemailer',
-    to: 'vanlam0145@gmail.com',
+    to: req.body.email,
     subject: 'Reset Password',
     //text: 'Your text is here', //Thường thi mình không dùng cái này thay vào đó mình sử dụng html để dễ edit hơn
     html: content, //Nội dung html mình đã tạo trên kia :))
