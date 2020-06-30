@@ -15,6 +15,7 @@ const typeToken = {
   refreshToken: 'refresh',
 };
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const { resDataModify } = require('../../helper/until');
 exports.getList = async (req, res) => {
   const result = await UsersService.getList();
@@ -77,7 +78,9 @@ exports.deleteImage = async (req, res) => {
     resDataModify(res, image);
   } catch (error) {
     console.log(error);
-    throw ErrorService.somethingWentWrong(`Error loading client secret file:', ${error}`);
+    throw ErrorService.somethingWentWrong(
+      `Error loading client secret file:', ${error}`
+    );
   }
 };
 exports.addImage = async (req, res) => {
@@ -94,7 +97,9 @@ exports.addImage = async (req, res) => {
 
     const auth = await driverGoogle.authorize(JSON.parse(content));
     if (!file)
-      throw ErrorService.somethingWentWrong(`Gui len khong dung format "multipart/form-data"?`);
+      throw ErrorService.somethingWentWrong(
+        `Gui len khong dung format "multipart/form-data"?`
+      );
     let userFolder = await folderLv2Drive.findOne({ idUser: req.user._id });
     if (!userFolder) {
       let userFolderID = await driverGoogle.createFolder(
@@ -110,7 +115,10 @@ exports.addImage = async (req, res) => {
       });
     }
     let countImage = await imageModel.count({ parent: userFolder.id });
-    if (countImage > 10) throw ErrorService.somethingWentWrong('You can only own 10 at most image');
+    if (countImage > 10)
+      throw ErrorService.somethingWentWrong(
+        'You can only own 10 at most image'
+      );
     let imageId = await driverGoogle.uploadFile(auth, req.file, userFolder.id);
     resDataModify(
       res,
@@ -128,7 +136,10 @@ exports.addImage = async (req, res) => {
   }
 };
 exports.setAvartar = async (req, res) => {
-  const result = await UsersService.setAvartar(req.params.idimage, req.user._id);
+  const result = await UsersService.setAvartar(
+    req.params.idimage,
+    req.user._id
+  );
   resDataModify(res, result);
 };
 exports.changePass = async (req, res) => {
@@ -151,9 +162,66 @@ exports.changePass = async (req, res) => {
   resDataModify(res, result);
 };
 exports.block = async (req, res) => {
-  const result = await UsersService.block(req.params.id)
-  resDataModify(res, result)
-}
+  const result = await UsersService.block(req.params.id);
+  resDataModify(res, result);
+};
+exports.resetPassword = async (req, res) => {
+  until.validateJson(
+    {
+      type: 'object',
+      properties: {
+        email: { type: 'string' },
+      },
+      required: ['email'],
+    },
+    req.body
+  );
+  const user = await UsersService.UserModel.findOne({ email: req.body.email });
+  if (!user)
+    throw ErrorService.dataEmpty(
+      `Không tìm thấy người dùng có email là ${req.body.email}`
+    );
+  var transporter = nodemailer.createTransport({
+    // config mail server
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: 'lamhua66@gmail.com', //Tài khoản gmail vừa tạo
+      pass: '0984745399', //Mật khẩu tài khoản gmail vừa tạo
+    },
+    tls: {
+      // do not fail on invalid certs
+      rejectUnauthorized: false,
+    },
+  });
+  var content = '';
+  content += `
+    <div style="padding: 10px; background-color: #003375">
+        <div style="padding: 10px; background-color: white;">
+            <span style="color: black">Đây là mail reset mật khẩu!</span>
+            <h4 style="color: #0085ff">123123</h4>
+            <span style="color: black">Trên đây là mật khẩu mới của bạn với tải khoản là: "${user.username}"</span>
+        </div>
+    </div>
+  `;
+  var mainOptions = {
+    // thiết lập đối tượng, nội dung gửi mail
+    //from: 'NQH-Test nodemailer',
+    to: 'vanlam0145@gmail.com',
+    subject: 'Reset Password',
+    //text: 'Your text is here', //Thường thi mình không dùng cái này thay vào đó mình sử dụng html để dễ edit hơn
+    html: content, //Nội dung html mình đã tạo trên kia :))
+  };
+  transporter.sendMail(mainOptions, async function (err, info) {
+    if (err) {
+      throw ErrorService.somethingWentWrong(err);
+    } else {
+      await UsersService.changePass(user._id, 'admin', '123123');
+      resDataModify(res, { message: 'Đã gửi mật khẩu mới tới email của bạn!' });
+    }
+  });
+};
 
 const _createToken = (user) => {
   const payload = {

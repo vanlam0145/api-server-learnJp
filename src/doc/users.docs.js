@@ -439,6 +439,41 @@ exports.path = () => {
         },
       },
     },
+    '/users/resetPassword': {
+      post: {
+        tags: ['Users'],
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
+        summary: 'reset password',
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  email: { type: 'string' },
+                },
+                required: ['email'],
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'OK',
+          },
+          '422': {
+            $ref: '#/definitions/responses/UnprocessableEntity',
+          },
+          '401': {
+            $ref: '#/definitions/responses/UnauthorizedError',
+          },
+        },
+      },
+    },
   };
 };
 exports.definition = () => {

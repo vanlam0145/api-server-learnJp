@@ -10,17 +10,29 @@ exports.ErrorService = {
   unauthorized: { code: 401, message: 'Chưa xác thực' },
   badToken: { code: 401, status: '-1', message: 'Không có quyền truy cập' },
   tokenExpired: { code: 401, status: '-2', message: 'Mã truy cập đã hết hạn' },
-  permissionDeny: { code: 405, status: '-3', message: 'Không đủ quyền để truy cập' },
+  permissionDeny: {
+    code: 405,
+    status: '-3',
+    message: 'Không đủ quyền để truy cập',
+  },
   // Request
   requestDataInvalid(message) {
-    return { code: 403, status: '-4', message: 'Dữ liệu gửi lên không hợp lệ: ' + message };
+    return {
+      code: 403,
+      status: '-4',
+      message: 'Dữ liệu gửi lên không hợp lệ: ' + message,
+    };
   },
   // External Request
   externalRequestFailed(message) {
     return { code: 500, status: '-5', message: 'Có lỗi xảy ra: ' };
   },
   // Mongo
-  mgRecoredNotFound: { code: 404, status: '-7', message: 'Không tìm thấy dữ liệu yêu cầu' },
+  mgRecoredNotFound: {
+    code: 404,
+    status: '-7',
+    message: 'Không tìm thấy dữ liệu yêu cầu',
+  },
   mgQueryFailed(message) {
     return {
       code: 403,
@@ -31,10 +43,10 @@ exports.ErrorService = {
   userError(message) {
     return { code: 403, status: '-9', message };
   },
-  loginFaild(message=" ") {
+  loginFaild(message = ' ') {
     return { code: 403, message: 'Login faild: ' + message };
   },
-  dataEmpty() {
-    return { code: 403, message: 'data Empty!' };
+  dataEmpty(message = '') {
+    return { code: 403, message: 'data Empty! ' + message };
   },
 };

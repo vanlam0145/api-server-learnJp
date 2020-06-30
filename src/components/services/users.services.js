@@ -44,13 +44,17 @@ exports.create = async function (body) {
   );
 };
 exports.update = async (id, body) => {
-  return await untilServices.exec(UserModel.findByIdAndUpdate(id, { $set: body }, { new: true }));
+  return await untilServices.exec(
+    UserModel.findByIdAndUpdate(id, { $set: body }, { new: true })
+  );
 };
 exports.delete = async (id) => {
   return await UserModel.findByIdAndDelete(id);
 };
 exports.login = async ({ username, password, email }) => {
-  const user = await UserModel.findOne({ ...(email ? { email } : { username }) });
+  const user = await UserModel.findOne({
+    ...(email ? { email } : { username }),
+  });
   if (user && bcrypt.compareSync(password, user.hash)) {
     const u_user = await UserModel.findByIdAndUpdate(
       user._id,
@@ -65,7 +69,9 @@ exports.login = async ({ username, password, email }) => {
       { new: true }
     );
     if (user.status == 'deactive')
-      throw ErrorService.loginFaild("Tài khoản này đã bị block! Liên hệ admin Hoàng để giải quyết!")
+      throw ErrorService.loginFaild(
+        'Tài khoản này đã bị block! Liên hệ admin Hoàng để giải quyết!'
+      );
     const { hash, ...userWithoutHash } = u_user.toJSON();
     return userWithoutHash;
   } else {
@@ -83,20 +89,25 @@ exports.getCourseLatest = async (id) => {
       populate: { path: 'contents' },
       options: { sort: '-create_at' },
     })
-    .select('-hash').lean();
+    .select('-hash')
+    .lean();
   user.courses.forEach((course, index) => {
-    let sumContent = course.contents.length
-    let sumContentMaster = _.filter(course.contents, { masterContent: true }).length
+    let sumContent = course.contents.length;
+    let sumContentMaster = _.filter(course.contents, { masterContent: true })
+      .length;
     if (sumContentMaster > 0)
-      user.courses[index].master = sumContentMaster * 100 / sumContent
+      user.courses[index].master = (sumContentMaster * 100) / sumContent;
   });
   return {
     courses: user.courses,
   };
 };
 exports.setAvartar = async (idimage, userID) => {
-  const image = await imageGoogleDrive.findOne({ id: idimage, idUser: userID }).exec();
-  if (!image || !image.webViewLink) throw ErrorService.somethingWentWrong("You don't have image!");
+  const image = await imageGoogleDrive
+    .findOne({ id: idimage, idUser: userID })
+    .exec();
+  if (!image || !image.webViewLink)
+    throw ErrorService.somethingWentWrong("You don't have image!");
   return await UserModel.findOneAndUpdate(
     { _id: userID },
     { $set: { avatar: image.webViewLink } },
@@ -105,7 +116,7 @@ exports.setAvartar = async (idimage, userID) => {
     .lean()
     .exec();
 };
-exports.changePass = async (id, role, newPass, oldPass) => {
+exports.changePass = async (id, role, newPass, oldPass = '') => {
   let user = await UserModel.findById(id);
   if (role != 'admin')
     if (!bcrypt.compareSync(oldPass || '', user.hash))
@@ -113,11 +124,9 @@ exports.changePass = async (id, role, newPass, oldPass) => {
   return await user.update({ hash: bcrypt.hashSync(newPass, 10) });
 };
 exports.block = async (id) => {
-  const user = UserModel.findById(id)
-  let status = 'deactive'
-  if (user.status == 'deactive')
-    status = 'active'
-  if (user.role == 'admin')
-    status = 'active'
-  return await UserModel.findByIdAndUpdate(id, { status }, { new: true })
-}
+  const user = UserModel.findById(id);
+  let status = 'deactive';
+  if (user.status == 'deactive') status = 'active';
+  if (user.role == 'admin') status = 'active';
+  return await UserModel.findByIdAndUpdate(id, { status }, { new: true });
+};
