@@ -16,7 +16,7 @@ const typeToken = {
 };
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const { resDataModify } = require('../../helper/until');
+const { resDataModify, resErrorModify } = require('../../helper/until');
 exports.getList = async (req, res) => {
   const result = await UsersService.getList();
   resDataModify(res, result);
@@ -192,10 +192,6 @@ exports.resetPassword = async (req, res) => {
       user: 'lamhua66@gmail.com', //Tài khoản gmail vừa tạo
       pass: '0984745399', //Mật khẩu tài khoản gmail vừa tạo
     },
-    // tls: {
-    //   // do not fail on invalid certs
-    //   rejectUnauthorized: false,
-    // },
   });
   var content = '';
   content += `
@@ -208,31 +204,22 @@ exports.resetPassword = async (req, res) => {
     </div>
   `;
   var mainOptions = {
-    // thiết lập đối tượng, nội dung gửi mail
-    //from: 'NQH-Test nodemailer',
     to: req.body.email,
     subject: 'Reset Password',
-    //text: 'Your text is here', //Thường thi mình không dùng cái này thay vào đó mình sử dụng html để dễ edit hơn
-    html: content, //Nội dung html mình đã tạo trên kia :))
+    html: content,
   };
-  try {
-    const data = await new Promise((resolve, reject) => {
-      transporter.sendMail(mainOptions, async function (err, info) {
-        if (err) {
-          reject(err);
-        } else {
-          console.log(user);
-          await UsersService.changePass(user._id, 'admin', '123123');
-          resolve({
-            message: 'Đã gửi mật khẩu mới tới email của bạn!',
-          });
-        }
+
+  transporter.sendMail(mainOptions, async function (err, info) {
+    if (err) {
+      resErrorModify(res, ErrorService.somethingWentWrong(err));
+    } else {
+      console.log(user);
+      await UsersService.changePass(user._id, 'admin', '123123');
+      resDataModify(res, {
+        message: 'Đã gửi mật khẩu mới tới email của bạn!',
       });
-    });
-    resDataModify(res, data);
-  } catch (error) {
-    throw ErrorService.somethingWentWrong(error);
-  }
+    }
+  });
 };
 
 const _createToken = (user) => {
