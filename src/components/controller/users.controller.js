@@ -178,7 +178,7 @@ exports.resetPassword = async (req, res) => {
   );
   const user = await UsersService.UserModel.findOne({
     email: req.body.email,
-  }).lean();
+  }); //.lean();
   if (!user)
     throw ErrorService.dataEmpty(
       `Không tìm thấy người dùng có email là ${req.body.email}`
@@ -215,14 +215,24 @@ exports.resetPassword = async (req, res) => {
     //text: 'Your text is here', //Thường thi mình không dùng cái này thay vào đó mình sử dụng html để dễ edit hơn
     html: content, //Nội dung html mình đã tạo trên kia :))
   };
-  transporter.sendMail(mainOptions, async function (err, info) {
-    if (err) {
-      throw ErrorService.somethingWentWrong(err);
-    } else {
-      await UsersService.changePass(user._id.toString(), 'admin', '123123');
-      resDataModify(res, { message: 'Đã gửi mật khẩu mới tới email của bạn!' });
-    }
-  });
+  try {
+    const data = await new Promise((resolve, reject) => {
+      transporter.sendMail(mainOptions, async function (err, info) {
+        if (err) {
+          reject(err);
+        } else {
+          console.log(user);
+          await UsersService.changePass(user._id, 'admin', '123123');
+          resolve({
+            message: 'Đã gửi mật khẩu mới tới email của bạn!',
+          });
+        }
+      });
+    });
+    resDataModify(res, data);
+  } catch (error) {
+    throw ErrorService.somethingWentWrong(error);
+  }
 };
 
 const _createToken = (user) => {
