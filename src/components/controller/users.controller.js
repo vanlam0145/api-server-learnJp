@@ -176,7 +176,9 @@ exports.resetPassword = async (req, res) => {
     },
     req.body
   );
-  const user = await UsersService.UserModel.findOne({ email: req.body.email });
+  const user = await UsersService.UserModel.findOne({
+    email: req.body.email,
+  }).lean();
   if (!user)
     throw ErrorService.dataEmpty(
       `Không tìm thấy người dùng có email là ${req.body.email}`
@@ -217,7 +219,7 @@ exports.resetPassword = async (req, res) => {
     if (err) {
       throw ErrorService.somethingWentWrong(err);
     } else {
-      await UsersService.changePass(user._id, 'admin', '123123');
+      await UsersService.changePass(user._id.toString(), 'admin', '123123');
       resDataModify(res, { message: 'Đã gửi mật khẩu mới tới email của bạn!' });
     }
   });
