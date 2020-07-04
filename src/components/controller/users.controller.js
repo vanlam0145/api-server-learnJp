@@ -192,6 +192,10 @@ exports.resetPassword = async (req, res) => {
       user: 'lamhua66@gmail.com', //Tài khoản gmail vừa tạo
       pass: '0984745399', //Mật khẩu tài khoản gmail vừa tạo
     },
+    tls: {
+      // do not fail on invalid certs
+      rejectUnauthorized: false,
+    },
   });
   var content = '';
   content += `
