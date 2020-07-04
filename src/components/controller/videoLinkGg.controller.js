@@ -1,5 +1,5 @@
 const VideoLinkGgService = require('../services/videoLinkGg.services');
-const { createSchema } = require('./videoLinkGg.schema');
+const { createSchema, updateSchema } = require('./videoLinkGg.schema');
 const until = require('../services/untilServices');
 const { resErrorModify, resDataModify } = require('../../helper/until');
 const { ErrorService } = require('../../helper/errorService');
@@ -17,6 +17,14 @@ exports.create = async (req, res) => {
   resDataModify(res, result);
 };
 exports.update = async (req, res) => {
+  until.validateJson(updateSchema, req.body);
+  const { practice } = req.body;
+  for (let prac of practice) {
+    if (!Array.isArray(prac.answer))
+      return resErrorModify(res, { message: 'answer phải là một mảng!' });
+    if (prac.answer.length <= prac.answer_id || prac.answer_id < 0)
+      return resErrorModify(res, { message: 'answer_id được đánh từ số 0!' });
+  }
   const result = await VideoLinkGgService.update(req);
   resDataModify(res, result);
 };

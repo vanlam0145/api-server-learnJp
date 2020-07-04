@@ -118,47 +118,47 @@ exports.path = () => {
       //         }
       //     }
       // },
-      // "put": {
-      //     "tags": ["VideoLinkGg"],
-      //     "security": [
-      //         {
-      //             "bearerAuth": []
-      //         }
-      //     ],
-      //     "parameters": [
-      //         {
-      //             "name": "id",
-      //             "in": "path",
-      //             "description": "id of videoLinkGg",
-      //             "required": true,
-      //         }
-      //     ],
-      //     "summary": "update details videoLinkGg",
-      //     "requestBody": {
-      //         "required": true,
-      //         "content": {
-      //             "application/json": {
-      //                 "schema": {
-      //                     "$ref": "#/definitions/VideoLinkGg"
-      //                 }
-      //             }
-      //         }
-      //     },
-      //     "responses": {
-      //         "200": {
-      //             "description": "OK",
-      //             "schema": {
-      //                 "$ref": "#/definitions/VideoLinkGg"
-      //             }
-      //         },
-      //         "422": {
-      //             "$ref": "#/definitions/responses/UnprocessableEntity"
-      //         },
-      //         "401": {
-      //             "$ref": "#/definitions/responses/UnauthorizedError"
-      //         }
-      //     }
-      // },
+      put: {
+        tags: ['VideoLinkGg'],
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            description: 'id of videoLinkGg',
+            required: true,
+          },
+        ],
+        summary: 'update details videoLinkGg',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/definitions/VideoLinkGg',
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'OK',
+            schema: {
+              $ref: '#/definitions/VideoLinkGg',
+            },
+          },
+          '422': {
+            $ref: '#/definitions/responses/UnprocessableEntity',
+          },
+          '401': {
+            $ref: '#/definitions/responses/UnauthorizedError',
+          },
+        },
+      },
     },
     '/videoLinkGg/refresh': {
       get: {
@@ -189,24 +189,23 @@ exports.definition = () => {
     VideoLinkGg: {
       type: 'object',
       properties: {
-        field0example: {
-          type: 'string',
-        },
-        field1example: {
+        practice: {
           type: 'array',
           items: {
             type: 'object',
             properties: {
-              field1examplefield0example: {
-                type: 'string',
+              question: { type: 'string' },
+              answer: {
+                type: 'array',
+                items: { type: 'string' },
               },
-              field1examplefield1example: {
-                type: 'string',
-              },
+              answer_id: { type: 'number' },
             },
           },
+          required: ['question', 'answer', 'answer_id'],
         },
       },
+      required: ['practice'],
     },
   };
 };
