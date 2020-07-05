@@ -16,6 +16,7 @@ const typeToken = {
 };
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const rp = require('request-promise');
 const { resDataModify, resErrorModify } = require('../../helper/until');
 exports.getList = async (req, res) => {
   const result = await UsersService.getList();
@@ -90,8 +91,6 @@ exports.addImage = async (req, res) => {
         if (err) throw err;
       });
     }
-    //const data = await driverGoogleHelper.syncFolder(req, res)
-    //if (data.length == 0) throw ErrorService.somethingWentWrong("Drive not have Folder Avatar")
     const file = await uploadFile(req, res);
     const content = fs.readFileSync('credentials.json');
     const auth = await driverGoogle.authorize(JSON.parse(content));
@@ -99,42 +98,34 @@ exports.addImage = async (req, res) => {
       throw ErrorService.somethingWentWrong(
         `Gui len khong dung format "multipart/form-data"?`
       );
-    let userFolder = await folderLv2Drive.findOne({ idUser: req.user._id });
-    if (!userFolder) {
-      let userFolderID = await driverGoogle.createFolder(
-        auth,
-        req.user._id,
-        '1YNBneKgkmHORdncYiCIZeeqpwiJ3DHdr'
-      );
-      userFolder = await folderLv2Drive.create({
-        idUser: req.user._id,
-        id: userFolderID,
-        name: req.user.username,
-        parent: '1YNBneKgkmHORdncYiCIZeeqpwiJ3DHdr',
-      });
-    }
-    let imageOld = await imageModel
-      .findOneAndDelete({ parent: userFolder.id })
-      .lean();
-    if (imageOld) {
-      await driverGoogle.deleteFile(auth, imageOld.id);
-    }
-    let imageId = await driverGoogle.uploadFile(auth, req.file, userFolder.id);
-    let imageNew = await imageModel.create({
-      name: req.file.originalname,
-      id: imageId.id,
-      parent: userFolder.id,
-      idUser: req.user._id,
-      webViewLink: imageId.webViewLink,
-    });
+    var options = {
+      method: 'POST',
+      uri: 'https://api.imgur.com/3/upload',
+      formData: {
+        image: {
+          value: fs.createReadStream(
+            path.join(__dirname, `../../../uploads/${req.file.filename}`)
+          ),
+          options: {
+            contentType: 'image/jpg',
+          },
+        },
+      },
+      headers: { Authorization: 'Client-ID e305cf5bfd7da15' },
+      //json: true, // Automatically stringifies the body to JSON
+    };
+    const imageNew = await rp.post(options);
+    fs.unlinkSync(
+      path.join(__dirname, `../../../uploads/${req.file.filename}`)
+    );
     const userNewAvartar = await UsersService.UserModel.findByIdAndUpdate(
       req.user._id,
       {
-        avatar: imageNew.webViewLink,
+        avatar: JSON.parse(imageNew).data.link,
       },
       { new: true }
     );
-    resDataModify(res, { imageNew, userNewAvartar });
+    resDataModify(res, userNewAvartar);
   } catch (error) {
     console.log(error);
     throw ErrorService.somethingWentWrong(error);
