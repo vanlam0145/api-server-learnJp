@@ -94,7 +94,6 @@ exports.addImage = async (req, res) => {
     //if (data.length == 0) throw ErrorService.somethingWentWrong("Drive not have Folder Avatar")
     const file = await uploadFile(req, res);
     const content = fs.readFileSync('credentials.json');
-
     const auth = await driverGoogle.authorize(JSON.parse(content));
     if (!file)
       throw ErrorService.somethingWentWrong(
@@ -114,22 +113,28 @@ exports.addImage = async (req, res) => {
         parent: '1YNBneKgkmHORdncYiCIZeeqpwiJ3DHdr',
       });
     }
-    let countImage = await imageModel.count({ parent: userFolder.id });
-    if (countImage > 10)
-      throw ErrorService.somethingWentWrong(
-        'You can only own 10 at most image'
-      );
+    let imageOld = await imageModel
+      .findOneAndDelete({ parent: userFolder.id })
+      .lean();
+    if (imageOld) {
+      await driverGoogle.deleteFile(auth, imageOld.id);
+    }
     let imageId = await driverGoogle.uploadFile(auth, req.file, userFolder.id);
-    resDataModify(
-      res,
-      await imageModel.create({
-        name: req.file.originalname,
-        id: imageId.id,
-        parent: userFolder.id,
-        idUser: req.user._id,
-        webViewLink: imageId.webViewLink,
-      })
+    let imageNew = await imageModel.create({
+      name: req.file.originalname,
+      id: imageId.id,
+      parent: userFolder.id,
+      idUser: req.user._id,
+      webViewLink: imageId.webViewLink,
+    });
+    const userNewAvartar = await UsersService.UserModel.findByIdAndUpdate(
+      req.user._id,
+      {
+        avatar: imageNew.webViewLink,
+      },
+      { new: true }
     );
+    resDataModify(res, { imageNew, userNewAvartar });
   } catch (error) {
     console.log(error);
     throw ErrorService.somethingWentWrong(error);
