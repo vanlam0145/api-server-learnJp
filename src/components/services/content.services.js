@@ -1,7 +1,8 @@
 const { ContentModel } = require('../model/content.model');
-const errorService = require('../../helper/errorService');
+const { ErrorService } = require('../../helper/errorService');
 const untilServices = require('./untilServices');
 const _ = require('lodash');
+const { CourseModel } = require('./course.services');
 exports.ContentModel = ContentModel;
 exports.getList = async () => await ContentModel.find({}).exec();
 exports.getById = async (id) => await ContentModel.findById(id).exec();
@@ -17,8 +18,21 @@ exports.update = async (req) => {
     )
   );
 };
-exports.delete = async (id) => {
-  return await untilServices.exec(ContentModel.findOneAndDelete({ _id: id }));
+exports.delete = async (id, idCourser) => {
+  try {
+    const content = await ContentModel.findOneAndDelete({ _id: id });
+
+    await CourseModel.findByIdAndUpdate(
+      idCourser,
+      {
+        $pull: { contents: id },
+      },
+      { new: true }
+    );
+    return content;
+  } catch (error) {
+    throw ErrorService.somethingWentWrong(error);
+  }
 };
 exports.triggerAnswer = async (id, body) => {
   const content = await ContentModel.findById(id);

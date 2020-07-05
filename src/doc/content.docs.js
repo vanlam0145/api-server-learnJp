@@ -103,6 +103,19 @@ exports.path = () => {
             required: true,
           },
         ],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  courserId: { type: 'string' },
+                },
+                required: ['courserId'],
+              },
+            },
+          },
+        },
         responses: {
           '200': {
             description: 'OK',

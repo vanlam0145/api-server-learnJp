@@ -15,4 +15,11 @@ module.exports = class Schema {
     },
     required: ['type', 'answer'],
   };
+  static deleteContent = {
+    type: 'object',
+    properties: {
+      courserId: { type: 'string' },
+    },
+    required: ['courserId'],
+  };
 };

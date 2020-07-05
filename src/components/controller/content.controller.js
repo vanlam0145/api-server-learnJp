@@ -1,5 +1,9 @@
 const ContentService = require('../services/content.services');
-const { createSchema, triggerAnswerSchema } = require('./content.schema');
+const {
+  createSchema,
+  triggerAnswerSchema,
+  deleteContent,
+} = require('./content.schema');
 const until = require('../services/untilServices');
 const errorService = require('../../helper/errorService');
 const { resErrorModify, resDataModify } = require('../../helper/until');
@@ -21,7 +25,8 @@ exports.update = async (req, res) => {
   resDataModify(res, result);
 };
 exports.delete = async (req, res) => {
-  const result = await ContentService.delete(req.params.id);
+  until.validateJson(deleteContent, req.body);
+  const result = await ContentService.delete(req.params.id, req.body.courserId);
   resDataModify(res, result);
 };
 exports.triggerAnswer = async (req, res) => {
