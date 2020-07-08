@@ -83,7 +83,7 @@ const usersSchema = new Schema(
       {
         userId: {
           type: Schema.Types.ObjectId,
-          ref: 'User',
+          ref: 'Users',
         },
         username: { type: String },
       },

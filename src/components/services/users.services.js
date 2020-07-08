@@ -80,7 +80,9 @@ exports.login = async ({ username, password, email }) => {
   }
 };
 exports.getMe = async (id) => {
-  return await UserModel.findById(id); //.populate({path:'friends.userId'}).select('-hash').lean()
+  return await UserModel.findById(id)
+    .populate({ path: 'friends.userId' })
+    .lean();
 };
 exports.getCourseLatest = async (id) => {
   const user = await UserModel.findById(id)
