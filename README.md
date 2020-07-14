@@ -6,8 +6,8 @@
 
 2. cài đặt
 
-- clone project learn-jp-kltn từ gitlab về
-- mở cmd(git bash here) tại project learn-jp-kltn
+- clone project DashboardLearnJPAPI từ gitlab về
+- mở cmd(git bash here) tại project DashboardLearnJPAPI
 - gõ lệnh "npm i" để cài đặt các thư viện
 - gõ lệnh "node server" để chạy server
 
