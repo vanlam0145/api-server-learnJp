@@ -6,7 +6,7 @@
 
 2. cài đặt
 
-- clone project api-server-learnJp từ gitlab về
+- clone project api-server-learnJp từ github về
 - mở cmd(git bash here) tại project api-server-learnJp
 - gõ lệnh "npm i" để cài đặt các thư viện
 - gõ lệnh "node server" để chạy server
