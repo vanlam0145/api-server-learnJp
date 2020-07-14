@@ -17,5 +17,6 @@
   giao diện của swagger thì đã chạy server thành công
   ở đây là toàn bộ api của server
 
-* lưu ý: để có thể sử dụng giao diện thì cần chạy server trước
-  Mọi thắc mắc LH email: vanlam0145@gmail.com
+* lưu ý:
+  -để có thể sử dụng giao diện thì cần chạy server trước
+  -Mọi thắc mắc LH email: vanlam0145@gmail.com
